@@ -3,6 +3,7 @@ require("express-async-errors");
 
 const authRoute = require("./routes/auth");
 const connectDB = require("./db/connect");
+const notFoundMiddleware = require("./middlewares/not-found");
 
 const express = require("express");
 const app = express();
@@ -29,6 +30,7 @@ app.use(cors());
 app.use(xss());
 app.use(helmet());
 
+
 const date = new Date();
 
 app.get("/", (req, res) => {
@@ -36,6 +38,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
+
+app.use(notFoundMiddleware);
 
 const port = process.env.PORT || 3000;
 
