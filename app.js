@@ -1,6 +1,7 @@
 require("dotenv").config();
 require("express-async-errors");
 
+const authRoute = require("./routes/auth");
 const connectDB = require("./db/connect");
 
 const express = require("express");
@@ -31,8 +32,10 @@ app.use(helmet());
 const date = new Date();
 
 app.get("/", (req, res) => {
-  res.status(StatusCodes.OK).json({status: 'works', date: date })
+  res.status(StatusCodes.OK).json({ status: "works", date: date });
 });
+
+app.use("/api/v1/auth", authRoute);
 
 const port = process.env.PORT || 3000;
 
