@@ -2,6 +2,9 @@ require("dotenv").config();
 require("express-async-errors");
 
 const authRoute = require("./routes/auth");
+const voterRoute = require("./routes/voter");
+const adminRoute = require("./routes/admin");
+
 const connectDB = require("./db/connect");
 const notFoundMiddleware = require("./middlewares/not-found");
 
@@ -30,7 +33,6 @@ app.use(cors());
 app.use(xss());
 app.use(helmet());
 
-
 const date = new Date();
 
 app.get("/", (req, res) => {
@@ -38,6 +40,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/voter", voterRoute);
+app.use("/api/v1/admin", adminRoute);
 
 app.use(notFoundMiddleware);
 
