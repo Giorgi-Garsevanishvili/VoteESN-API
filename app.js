@@ -16,6 +16,8 @@ const xss = require("xss-clean");
 const helmet = require("helmet");
 const ratelimitter = require("express-rate-limit");
 const { StatusCodes } = require("http-status-codes");
+const ErrorHandlerMiddleware = require("./middlewares/error-handler");
+const authenticationMiddleware = require("./middlewares/authentication");
 
 app.set("trust proxy", 1);
 app.use(
@@ -40,10 +42,11 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/voter", voterRoute);
-app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/user", authenticationMiddleware, voterRoute);
+app.use("/api/v1/admin", authenticationMiddleware, adminRoute);
 
 app.use(notFoundMiddleware);
+app.use(ErrorHandlerMiddleware);
 
 const port = process.env.PORT || 3000;
 
