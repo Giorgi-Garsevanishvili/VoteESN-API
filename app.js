@@ -18,6 +18,7 @@ const ratelimitter = require("express-rate-limit");
 const { StatusCodes } = require("http-status-codes");
 const ErrorHandlerMiddleware = require("./middlewares/error-handler");
 const authenticationMiddleware = require("./middlewares/authentication");
+const authorization = require('./middlewares/authorizationMiddleware')
 
 app.set("trust proxy", 1);
 app.use(
@@ -42,8 +43,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/user", authenticationMiddleware, voterRoute);
-app.use("/api/v1/admin", authenticationMiddleware, adminRoute);
+app.use("/api/v1/user", authenticationMiddleware,authorization('voter'), voterRoute);
+app.use("/api/v1/admin", authenticationMiddleware,authorization('admin'), adminRoute);
 
 app.use(notFoundMiddleware);
 app.use(ErrorHandlerMiddleware);
