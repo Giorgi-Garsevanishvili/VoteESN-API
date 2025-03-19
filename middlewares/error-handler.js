@@ -7,9 +7,9 @@ const customErrorHandler = (err, req, res, next) => {
   };
 
   if (err.name === "ValidationError") {
-    customError.msg = Object.values(err.error)
+    customError.msg = Object.values(err.errors)
       .map((itme) => itme.message)
-      .join(",");
+      .join(", ");
     customError.statusCode = StatusCodes.BAD_REQUEST;
   }
 

@@ -1,4 +1,4 @@
-const BadRequestError = require("../errors/bad-request.js");
+const { BadRequestError, UnauthenticatedError } = require("../errors");
 const User = require("../models/user.js");
 const { StatusCodes } = require("http-status-codes");
 const nodemailer = require("nodemailer");
@@ -47,21 +47,17 @@ const login = async (req, res, next) => {
   const { password } = req.body;
 
   if (!normalisedEmail || !password) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Provide Credintials" });
+    throw new BadRequestError("Please provide email and password");
   }
 
   const user = await User.findOne({ email: normalisedEmail });
   if (!user) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ msg: "No user" });
+    throw new BadRequestError("No user found!");
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "Incorrect Password" });
+    throw new UnauthenticatedError("Wrong Password!");
   }
 
   const token = user.createJWT();
