@@ -1,5 +1,5 @@
 const { BadRequestError, UnauthenticatedError } = require("../errors");
-const User = require("../models/user.js");
+const User = require("../models/user-model.js");
 const { StatusCodes } = require("http-status-codes");
 const  emailNotification  = require("../utils/mailNotification.js");
 
