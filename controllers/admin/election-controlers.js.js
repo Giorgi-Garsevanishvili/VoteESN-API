@@ -1,12 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
-const Election = require("../models/election-model");
-const User = require('../models/user-model')
+const Election = require("../../models/election-model");
 const {
   UnauthenticatedError,
   BadRequestError,
   NotFoundError,
-} = require("../errors");
-const notFound = require("../middlewares/not-found");
+} = require("../../errors");
 
 const createElection = async (req, res) => {
   try {
@@ -50,13 +48,6 @@ const getOneElection = async (req, res) => {
 const updateElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
-
-    let election = await Election.findOne({ _id: electionID });
-    console.log(election);
-
-    if (!election) {
-      return NotFoundError("No Election founded");
-    }
 
     if (req.user.role !== "admin") {
       return UnauthenticatedError("Only admin is able to update Elections");
@@ -102,27 +93,7 @@ const generateQrCodes = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "generate QR / admin" });
 };
 
-const getUser = async (req, res) => {
-  const user = await User.find()
-  if(!user){
-    throw new NotFoundError('Currently there is no any user')
-  }
 
-  res.status(StatusCodes.OK).json({user})
-}
-
-const updateUser = async (req,res)=> {
-  const {id: userID} = req.params
-  const user = await User.findOneAndUpdate({_id: userID},req.body,{
-    new: true,
-    runValidators: true,
-  })
-  if(!user){
-    throw new NotFoundError('Currently there is no any user')
-  }
-
-  res.status(StatusCodes.OK).json({success: true, data: {user}})
-}
 
 module.exports = {
   generateQrCodes,
@@ -131,6 +102,4 @@ module.exports = {
   createElection,
   updateElection,
   deleteElection,
-  updateUser,
-  getUser
 };
