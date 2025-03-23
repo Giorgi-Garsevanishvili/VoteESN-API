@@ -1,8 +1,10 @@
-const {StatusCodes} = require('http-status-codes')
-const JSZip = require('jszip')
-const QRCode = require('qrcode')
+const { StatusCodes } = require("http-status-codes");
+const JSZip = require("jszip");
+const QRCode = require("qrcode");
 const { v4: uuidv4 } = require("uuid");
-const VoterToken = require('../../models/voterToken')
+const VoterToken = require("../../models/voterToken");
+const { NotBeforeError } = require("jsonwebtoken");
+const { NotFoundError, BadRequestError } = require("../../errors");
 
 const generateQrCodes = async (req, res) => {
   try {
@@ -67,12 +69,19 @@ const getQRCodes = async (req, res) => {
   }
 };
 
-const deleteAccessQR = async( req, res) => {
-  res.send('delete QR access')
-}
+const deleteAccessQR = async (req, res) => {
+  const { id: electionId } = req.params;
+
+  const deletedTokens = await VoterToken.deleteMany({electionId});
+
+  if (deletedTokens.deletedCount === 0) {
+    throw new BadRequestError('Failed to delete tokens');
+  }
+  res.status(StatusCodes.OK).json({success: true, msg:`Access QR Codes for Election with id: ${electionId}, succcessfully deleted`})
+};
 
 module.exports = {
   getQRCodes,
   generateQrCodes,
-  deleteAccessQR
-}
+  deleteAccessQR,
+};
