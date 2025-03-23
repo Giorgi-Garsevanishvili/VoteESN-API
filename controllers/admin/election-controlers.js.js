@@ -53,7 +53,7 @@ const updateElection = async (req, res) => {
       return UnauthenticatedError("Only admin is able to update Elections");
     }
 
-    election = await Election.findOneAndUpdate(
+    const election = await Election.findOneAndUpdate(
       {
         _id: electionID,
       },
@@ -89,14 +89,8 @@ const deleteElection = async (req, res) => {
     });
 };
 
-const generateQrCodes = async (req, res) => {
-  res.status(StatusCodes.OK).json({ msg: "generate QR / admin" });
-};
-
-
 
 module.exports = {
-  generateQrCodes,
   getAllElection,
   getOneElection,
   createElection,
