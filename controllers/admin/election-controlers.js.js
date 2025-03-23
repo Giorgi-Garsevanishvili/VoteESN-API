@@ -70,25 +70,26 @@ const updateElection = async (req, res) => {
 };
 
 const deleteElection = async (req, res) => {
-  const { id: electionID } = req.params;
-  const election = await Election.findByIdAndDelete(electionID);
+  try {
+    const { id: electionID } = req.params;
+    const election = await Election.findByIdAndDelete(electionID);
 
-  if (req.user.role !== "admin") {
-    return UnauthenticatedError("Only admin is able to update Elections");
-  }
+    if (req.user.role !== "admin") {
+      return UnauthenticatedError("Only admin is able to update Elections");
+    }
 
-  if (!election) {
-    throw new BadRequestError(`No election found by ID: ${electionID}`);
-  }
+    if (!election) {
+      throw new BadRequestError(`No election found by ID: ${electionID}`);
+    }
 
-  res
-    .status(StatusCodes.OK)
-    .json({
+    res.status(StatusCodes.OK).json({
       success: true,
       msg: `Election By ID:${electionID}, successfully deleted!`,
     });
+  } catch (error) {
+    throw new BadRequestError(error);
+  }
 };
-
 
 module.exports = {
   getAllElection,
