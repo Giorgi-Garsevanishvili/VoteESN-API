@@ -19,7 +19,7 @@ const getAllElection = async (req, res) => {
 const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
-    const election = await Election.findOne({ _id: electionID });
+    const election = await Election.findOne({ _id: electionID })
     res.status(StatusCodes.OK).json({ success: true, data: election });
   } catch (error) {
     throw new BadRequestError(error);
@@ -30,32 +30,6 @@ const submitVote = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "vote" });
 };
 
-const verifyQrToken = async (req, res) => {
-  try {
-    const { token } = req.query;
-    const voterQR = await voterToken.findOne({ token, used: false });
-
-    if (!voterQR) {
-      throw new BadRequestError(
-        "No Voter Founded or Acces code is already used."
-      );
-    }
-
-    const updateToken = voterQR.token.toString();
-
-    await markTokenAsUsed(updateToken);
-
-    res
-      .status(StatusCodes.OK)
-      .json({
-        success: true,
-        electionId: voterQR.electionId,
-        status: voterQR.used,
-      });
-  } catch (error) {
-    throw new BadRequestError(error);
-  }
-};
 
 const markTokenAsUsed = async (token) => {
   await voterToken.findOneAndUpdate(
@@ -70,5 +44,4 @@ module.exports = {
   getAllElection,
   getOneElection,
   submitVote,
-  verifyQrToken,
 };
