@@ -19,6 +19,9 @@ const authenticationMiddleware = async (req, res, next) => {
     };
     next();
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      throw new UnauthenticatedError("Token has expired");
+    }
     throw new UnauthenticatedError("Not Authorization to acces this route");
   }
 };
