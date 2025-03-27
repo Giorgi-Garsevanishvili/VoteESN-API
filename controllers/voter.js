@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../errors");
 const Election = require("../models/election-model");
 const voterToken = require("../models/voterToken");
+const VoterModel = require("../models/voter-model");
 
 const getAllElection = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ const getAllElection = async (req, res) => {
 const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
-    const election = await Election.findOne({ _id: electionID })
+    const election = await Election.findOne({ _id: electionID });
     res.status(StatusCodes.OK).json({ success: true, data: election });
   } catch (error) {
     throw new BadRequestError(error);
@@ -27,9 +28,14 @@ const getOneElection = async (req, res) => {
 };
 
 const submitVote = async (req, res) => {
-  res.status(StatusCodes.OK).json({ msg: "vote" });
-};
+  const { id: electionId } = req.params;
+  const usedQRCode = req.voterQR.token;
+  const answer = req.body;
+  const vote = await VoterModel.create({ electionId, answer, usedQRCode });
+  await markTokenAsUsed(usedQRCode);
 
+  res.status(StatusCodes.OK).json({ success: true, data: vote });
+};
 
 const markTokenAsUsed = async (token) => {
   await voterToken.findOneAndUpdate(
