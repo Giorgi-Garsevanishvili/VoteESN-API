@@ -59,10 +59,15 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { id: userID } = req.params;
-  const user = await User.findOneAndDelete(userID);
-
+  
   if (req.user.role !== "admin") {
     return UnauthenticatedError("Only admin is able to update Elections");
+  }
+
+  const user = await User.findByIdAndDelete(userID);
+  
+  if(!user){
+    throw new NotFoundError(`user with id:${userID} not found!`)
   }
 
   emailNotification(

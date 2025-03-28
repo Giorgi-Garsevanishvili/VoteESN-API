@@ -5,6 +5,7 @@ const {
   BadRequestError,
   NotFoundError,
 } = require("../../errors");
+const notFound = require("../../middlewares/not-found");
 
 const createElection = async (req, res) => {
   try {
@@ -39,6 +40,9 @@ const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
     const election = await Election.findOne({ _id: electionID });
+    if(!election){
+      throw new NotFoundError(`Election with id:${electionID} not found!`)
+    }
     res.status(StatusCodes.OK).json({ success: true, data: election });
   } catch (error) {
     throw new BadRequestError(error);
@@ -63,6 +67,10 @@ const updateElection = async (req, res) => {
         runValidators: true,
       }
     );
+
+    if(!election){
+      throw new NotFoundError(`Election with id:${electionID} not found!`)
+    }
     res.status(StatusCodes.OK).json({ election });
   } catch (error) {
     throw new BadRequestError(error);

@@ -82,6 +82,13 @@ paths:
           required: true
           schema:
             type: string
+          description: "Election ID"
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "Authentication token"
       responses:
         '200':
           description: Successful response
@@ -98,7 +105,13 @@ paths:
         schema:
           type: string
         required: true
-        description: The Jobs ID
+        description: "Election ID"
+      - in: query
+        name: token
+        required: true
+        schema:
+            type: string
+        description: "Authentication token"
       requestBody:
         content:
           application/json:
@@ -249,6 +262,11 @@ paths:
       responses:
         '200':
           description: Successful response
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
 
     delete:
       tags:
