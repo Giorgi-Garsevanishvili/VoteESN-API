@@ -36,15 +36,19 @@ app.use(cors());
 app.use(xss());
 app.use(helmet());
 
-const date = new Date();
+//extra backages 
+const swaggerUI = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load('./swagger.yaml')
 
 app.get("/", (req, res) => {
-  res.status(StatusCodes.OK).json({ status: "works", date: date });
+  res.redirect('/api-docs')
 });
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", authenticationMiddleware,authorization('voter'), voterRoute);
 app.use("/api/v1/admin", authenticationMiddleware,authorization('admin'), adminRoute);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 app.use(notFoundMiddleware);
 app.use(ErrorHandlerMiddleware);

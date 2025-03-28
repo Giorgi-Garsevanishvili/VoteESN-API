@@ -1,0 +1,372 @@
+openapi: 3.0.0
+info:
+  title: VoteESN-API
+  version: 1.0.0
+servers:
+  - url: https://voteesn-api.onrender.com/api/v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+tags:
+  - name: Register/Login
+  - name: Voter / User
+  - name: Admin / election > Election Controllers
+  - name: Admin / election > User Controllers
+  - name: Admin / election > Voter Access QR
+  - name: Admin / election > Results
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Register/Login
+      summary: Register
+      security:
+      - bearerAuth: []
+      description: >-
+        This is a POST request, submitting data to an API via the request body.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: ''
+                email: ''
+                password: ''
+      responses:
+        '200':
+          description: Successful response
+
+  /auth/login:
+    post:
+      tags:
+        - Register/Login
+      summary: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: ''
+                password: ''
+      responses:
+        '200':
+          description: Successful response
+
+  /user/voter:
+    get:
+      tags:
+        - Voter / User
+      summary: getAllElection
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+
+  /user/voter/{id}:
+    get:
+      tags:
+        - Voter / User
+      summary: getOneElection
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+
+    post:
+      tags:
+        - Voter / User
+      summary: submitVote
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Jobs ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                - question: Why did you do that?
+                  selectedOption: I don't know
+      responses:
+        '200':
+          description: Successful response
+
+  /admin/election:
+    post:
+      tags:
+        - Admin / election > Election Controllers
+      summary: createElection
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                title: Election 2025
+                topics:
+                  - title: Candidate 1
+                    options:
+                      - text: Yes
+                      - text: No
+      responses:
+        '200':
+          description: Successful response
+
+    get:
+      tags:
+        - Admin / election > Election Controllers
+      summary: getAllElection
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+
+  /admin/election/{id}:
+    get:
+      tags:
+        - Admin / election > Election Controllers
+      summary: getOneElection
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+
+    patch:
+      tags:
+        - Admin / election > Election Controllers
+      summary: updateElection
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Jobs ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                title: Election 2026
+                topics:
+                  - title: Giorgi as a president
+                    options:
+                      - text: Yes
+                      - text: No
+      responses:
+        '200':
+          description: Successful response
+
+    delete:
+      tags:
+        - Admin / election > Election Controllers
+      summary: deleteElection
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Jobs ID
+      responses:
+        '200':
+          description: Successful response
+
+  /admin/election/{id}/generate-qr:
+    post:
+      tags:
+        - Admin / election > Voter Access QR
+      summary: generateQrCodes
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: Election ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                electionId: ''
+                numToken: 5
+      responses:
+        '200':
+          description: Successful response
+
+    get:
+      tags:
+        - Admin / election > Voter Access QR
+      summary: Get QR codes ZIP
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Jobs ID
+      responses:
+        '200':
+          description: Successful response
+
+    delete:
+      tags:
+        - Admin / election > Voter Access QR
+      summary: Delete Access QR codes
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Jobs ID
+      responses:
+        '200':
+          description: Successful response
+
+  /admin/system/users:
+    get:
+      tags:
+        - Admin / election > User Controllers
+      summary: Get Users
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+
+    post:
+      tags:
+        - Admin / election > User Controllers
+      summary: createUser
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: ''
+                email: ''
+                password: ''
+                role: ''
+      responses:
+        '200':
+          description: Successful response
+
+  /admin/system/users/{id}:
+    patch:
+      tags:
+        - Admin / election > User Controllers
+      summary: Update User
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                role: ''
+      responses:
+        '200':
+          description: Successful response
+
+    delete:
+      tags:
+        - Admin / election > User Controllers
+      summary: deleteUser
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+
+  /admin/election/{id}/results:
+    get:
+      tags:
+        - Admin / election > Results
+      summary: Get Results
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+
+    delete:
+      tags:
+        - Admin / election > Results
+      summary: DeleteResults
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response

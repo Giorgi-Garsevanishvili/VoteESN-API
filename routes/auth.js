@@ -1,9 +1,10 @@
 const express = require("express");
 const { register, login } = require("../controllers/auth");
-const redirectByRole = require("../middlewares/redirect-role");
+const authenticationMiddleware = require("../middlewares/authentication");
+const authorizationMiddleware = require("../middlewares/authorizationMiddleware");
 const route = express.Router();
 
-route.post("/register", register);
-route.post("/login", login, redirectByRole);
+route.post("/register", authenticationMiddleware,authorizationMiddleware('admin'),register);
+route.post("/login", login);
 
 module.exports = route;
