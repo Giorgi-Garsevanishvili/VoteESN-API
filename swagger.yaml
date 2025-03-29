@@ -186,7 +186,7 @@ paths:
         schema:
           type: string
         required: true
-        description: The Jobs ID
+        description: Election ID
       requestBody:
         content:
           application/json:
@@ -215,7 +215,7 @@ paths:
         schema:
           type: string
         required: true
-        description: The Jobs ID
+        description: Election ID
       responses:
         '200':
           description: Successful response
@@ -258,7 +258,7 @@ paths:
         schema:
           type: string
         required: true
-        description: The Jobs ID
+        description: Election ID
       responses:
         '200':
           description: Successful response
@@ -280,7 +280,7 @@ paths:
         schema:
           type: string
         required: true
-        description: The Jobs ID
+        description: Election ID
       responses:
         '200':
           description: Successful response

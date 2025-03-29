@@ -5,7 +5,6 @@ const {
   BadRequestError,
   NotFoundError,
 } = require("../../errors");
-const notFound = require("../../middlewares/not-found");
 
 const createElection = async (req, res) => {
   try {
