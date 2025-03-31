@@ -3,6 +3,7 @@ const { BadRequestError } = require("../errors");
 const Election = require("../models/election-model");
 const voterToken = require("../models/voterToken");
 const VoterModel = require("../models/voter-model");
+const { default: mongoose } = require("mongoose");
 
 const getAllElection = async (req, res) => {
   try {
@@ -28,25 +29,35 @@ const getOneElection = async (req, res) => {
 };
 
 const submitVote = async (req, res) => {
-  const { id: electionId } = req.params;
-  const usedQRCode = req.voterQR.token;
-  const answer = req.body;
-  const vote = await VoterModel.create({ electionId, answer, usedQRCode });
-  await markTokenAsUsed(usedQRCode);
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  res.status(StatusCodes.OK).json({ success: true, data: vote });
-};
+  try {
+    const { id: electionId } = req.params;
+    const usedQRCode = req.voterQR.token;
+    const answer = req.body;
+    const vote = await VoterModel.create([{ electionId, answer, usedQRCode }], {
+      session,
+    });
 
-const markTokenAsUsed = async (token) => {
-  await voterToken.findOneAndUpdate(
-    { token },
-    { used: true },
-    { new: true, runValidators: true }
-  );
+    await voterToken.findOneAndUpdate(
+      { token: usedQRCode },
+      { used: true },
+      { new: true, runValidators: true }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(StatusCodes.OK).json({ success: true, data: vote });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new BadRequestError(error);
+  }
 };
 
 module.exports = {
-  markTokenAsUsed,
   getAllElection,
   getOneElection,
   submitVote,

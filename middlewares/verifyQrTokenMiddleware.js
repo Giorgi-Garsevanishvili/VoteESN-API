@@ -4,6 +4,11 @@ const voterToken = require("../models/voterToken");
 const verifyQrTokenMiddleware = async (req, res, next) => {
   try {
     const { token } = req.query;
+
+    if(!token){
+      throw new BadRequestError("Access code is required!")
+    }
+
     const voterQR = await voterToken.findOne({ token, used: false });
 
     if (!voterQR) {

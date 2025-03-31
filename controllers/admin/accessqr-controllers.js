@@ -3,8 +3,7 @@ const JSZip = require("jszip");
 const QRCode = require("qrcode");
 const { v4: uuidv4 } = require("uuid");
 const VoterToken = require("../../models/voterToken");
-const { NotBeforeError } = require("jsonwebtoken");
-const { NotFoundError, BadRequestError } = require("../../errors");
+const { BadRequestError } = require("../../errors");
 
 const generateQrCodes = async (req, res) => {
   try {

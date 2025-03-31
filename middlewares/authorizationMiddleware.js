@@ -1,6 +1,11 @@
 const { StatusCodes } = require("http-status-codes");
 
 const authorizationMiddleware = (requiredRole) => (req, res, next) => {
+
+  if(!req.user) {
+    return res.status(StatusCodes.UNAUTHORIZED).json({message: `Unauthorized: No user data`})
+  }
+
   if (req.user.role !== requiredRole) {
     return res
       .status(StatusCodes.FORBIDDEN)
