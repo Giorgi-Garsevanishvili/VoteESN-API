@@ -7,6 +7,7 @@ const {
   BadRequestError,
 } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification");
+const bcrypt = require("bcryptjs");
 
 const createUser = async (req, res) => {
   const user = new User({ ...req.body });
@@ -33,6 +34,13 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id: userID } = req.params;
+
+  if (req.body.password) {
+    req.body.password = String(req.body.password);
+    const salt = await bcrypt.genSalt(10);
+    req.body.password = await bcrypt.hash(req.body.password, salt);
+  }
+
   const user = await User.findOneAndUpdate({ _id: userID }, req.body, {
     new: true,
     runValidators: true,
@@ -59,15 +67,15 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { id: userID } = req.params;
-  
+
   if (req.user.role !== "admin") {
     return UnauthenticatedError("Only admin is able to update Elections");
   }
 
   const user = await User.findByIdAndDelete(userID);
-  
-  if(!user){
-    throw new NotFoundError(`user with id:${userID} not found!`)
+
+  if (!user) {
+    throw new NotFoundError(`user with id:${userID} not found!`);
   }
 
   emailNotification(
