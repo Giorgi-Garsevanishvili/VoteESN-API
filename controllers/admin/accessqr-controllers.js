@@ -14,17 +14,21 @@ const generateQrCodes = async (req, res) => {
       throw new BadRequestError("QR code amount or ElectionID is missing");
     }
 
+    const accessToken = [];
     const qrCodes = [];
     for (let i = 0; i < numToken; i++) {
       const token = uuidv4();
       const qrCodeImage = await QRCode.toDataURL(token);
       await VoterToken.create({ token, electionId, qrCodeImage });
 
+      accessToken.push(token);
       qrCodes.push(qrCodeImage);
     }
-    res
-      .status(StatusCodes.CREATED)
-      .json({ success: true, QRcodes: { qrCodes } });
+    res.status(StatusCodes.CREATED).json({
+      success: true,
+      QRcodes: { qrCodes },
+      AccessTokens: { accessToken },
+    });
   } catch (error) {
     throw new BadRequestError(error);
   }
@@ -68,19 +72,45 @@ const getQRCodes = async (req, res) => {
   }
 };
 
+const getAccessCodes = async (req, res) => {
+  try {
+    const { id: electionId } = req.params;
+    const accessTokens = await VoterToken.find({ electionId });
+
+    if (!accessTokens.length) {
+      return res
+        .status(404)
+        .json({ error: "No tokens found for this election" });
+    }
+
+    const tokens = accessTokens.map((el) => ({
+      token: el.token,
+      used: el.used,
+    }));
+
+    res.status(StatusCodes.OK).json({ tokens });
+  } catch (error) {
+    throw new BadRequestError(error);
+  }
+};
+
 const deleteAccessQR = async (req, res) => {
   const { id: electionId } = req.params;
 
-  const deletedTokens = await VoterToken.deleteMany({electionId});
+  const deletedTokens = await VoterToken.deleteMany({ electionId });
 
   if (deletedTokens.deletedCount === 0) {
-    throw new BadRequestError('Failed to delete tokens');
+    throw new BadRequestError("Failed to delete tokens");
   }
-  res.status(StatusCodes.OK).json({success: true, msg:`Access QR Codes for Election with id: ${electionId}, succcessfully deleted`})
+  res.status(StatusCodes.OK).json({
+    success: true,
+    msg: `Access QR Codes for Election with id: ${electionId}, succcessfully deleted`,
+  });
 };
 
 module.exports = {
   getQRCodes,
+  getAccessCodes,
   generateQrCodes,
   deleteAccessQR,
 };

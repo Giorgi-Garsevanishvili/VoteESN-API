@@ -16,6 +16,7 @@ tags:
   - name: Voter / User
   - name: Admin / election > Election Controllers
   - name: Admin / election > User Controllers
+  - name: Admin / election > Voter Access Tokens
   - name: Admin / election > Voter Access QR
   - name: Admin / election > Results
 paths:
@@ -220,11 +221,29 @@ paths:
         '200':
           description: Successful response
 
+  /admin/election/tokens/{id}:
+    get:
+      tags:
+        - Admin / election > Voter Access Tokens
+      summary: getAccessCodes
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          
+
   /admin/election/{id}/generate-qr:
     post:
       tags:
         - Admin / election > Voter Access QR
-      summary: generateQrCodes
+      summary: generate QR Codes and Tokens
       security:
       - bearerAuth: []
       parameters:
@@ -271,7 +290,7 @@ paths:
     delete:
       tags:
         - Admin / election > Voter Access QR
-      summary: Delete Access QR codes
+      summary: Delete Access QR codes and Tokens
       security:
       - bearerAuth: []
       parameters:
