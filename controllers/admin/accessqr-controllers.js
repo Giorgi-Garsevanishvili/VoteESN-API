@@ -65,11 +65,6 @@ const getQRCodes = async (req, res) => {
       `attachment; filename=qrcodes_${timestamp}.zip`
     );
 
-    res.setHeader("Content-Type", "application/zip");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${filename}.zip`
-    );
     res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
 
     res.status(200).send(zipBuffer);
