@@ -1,5 +1,4 @@
 const ipRangeCheck = require("ip-range-check");
-const { getSettingsFromDB } = require("../controllers/settings-controller");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../errors");
 const Settings = require("../models/setting-model");
@@ -14,16 +13,14 @@ const voterAccessMiddlware = async (req, res, next) => {
   try {
     const settings = await fetchSettings();
 
-    if (settings) {
-      if (settings.ipRestrictionEnabled) {
-        const clientIP = req.ip;
-        const allowed = ipRangeCheck(clientIP, settings.allowedIPs);
+    if (settings?.ipRestrictionEnabled) {
+      const clientIP = req.ip;
+      const allowed = ipRangeCheck(clientIP, settings.allowedIPs);
 
-        if (!allowed) {
-          return res
-            .status(StatusCodes.FORBIDDEN)
-            .send("Access Denied: IP not Allowd.");
-        }
+      if (!allowed) {
+        return res
+          .status(StatusCodes.FORBIDDEN)
+          .send("Access Denied: IP not Allowed.");
       }
     }
 
