@@ -19,6 +19,7 @@ const { StatusCodes } = require("http-status-codes");
 const ErrorHandlerMiddleware = require("./middlewares/error-handler");
 const authenticationMiddleware = require("./middlewares/authentication");
 const authorization = require('./middlewares/authorizationMiddleware')
+const voterAccessMiddlware = require("./middlewares/voterAccessMiddleware");
 
 app.set("trust proxy", 1);
 app.use(
@@ -38,7 +39,7 @@ app.use(helmet());
 
 //extra backages 
 const swaggerUI = require('swagger-ui-express')
-const YAML = require('yamljs')
+const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml')
 
 app.get("/", (req, res) => {
@@ -46,7 +47,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/user", authenticationMiddleware,authorization('voter'), voterRoute);
+app.use("/api/v1/user", voterAccessMiddlware,authenticationMiddleware,authorization('voter'), voterRoute);
 app.use("/api/v1/admin", authenticationMiddleware,authorization('admin'), adminRoute);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 

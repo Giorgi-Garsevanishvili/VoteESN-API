@@ -5,9 +5,14 @@ const Settings = require("../models/setting-model");
 const getSettingsFromDB = async (req, res) => {
   try {
     const settings = await Settings.find({});
+    if (settings.length < 1) {
+      return res
+        .status(StatusCodes.OK)
+        .json({ message: "No settings to display!" });
+    }
     res.status(StatusCodes.OK).json({ settings });
   } catch (error) {
-    throw new BadRequestError(error);
+    console.log(error);
   }
 };
 
@@ -25,9 +30,7 @@ const createSettings = async (req, res) => {
         .json({ error: "Settings data required and cannot be empty!" });
     }
 
-    const settings = new Settings(settingsData);
-    await settings.validate();
-    await settings.save();
+    const settings = await Settings.create(settingsData);
 
     res.status(StatusCodes.CREATED).json({ settings });
   } catch (error) {
@@ -83,11 +86,9 @@ const deleteSettings = async (req, res) => {
       );
     }
 
-    res
-      .status(StatusCodes.OK)
-      .json({
-        message: `settings with id: ${settingsID}, successfully deleted!`,
-      });
+    res.status(StatusCodes.OK).json({
+      message: `settings with id: ${settingsID}, successfully deleted!`,
+    });
   } catch (error) {
     throw new BadRequestError(error);
   }
