@@ -1,7 +1,7 @@
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 const User = require("../models/user-model.js");
 const { StatusCodes } = require("http-status-codes");
-const  emailNotification  = require("../utils/mailNotification.js");
+const emailNotification = require("../utils/mailNotification.js");
 
 const register = async (req, res) => {
   const user = new User({ ...req.body });
@@ -35,6 +35,7 @@ const login = async (req, res, next) => {
     throw new UnauthenticatedError("Wrong Password!");
   }
 
+  const clientIP = req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
   const token = user.createJWT();
   const userAgent = req.get("User-Agent");
   const date = new Date();
@@ -42,7 +43,7 @@ const login = async (req, res, next) => {
   emailNotification(
     user.email,
     "Login Alert!",
-    `<h3>Dear ${user.name}, <div>New Login From:</div> <div>Client IP: ${req.ip}.</div> <div>OS/Browser: ${userAgent}.</div><div> Date: ${date}</div> </h3>`
+    `<h3>Dear ${user.name}, <div>New Login From:</div> <div>Client IP: ${clientIP}.</div> <div>OS/Browser: ${userAgent}.</div><div> Date: ${date}</div> </h3>`
   );
   res
     .status(StatusCodes.OK)

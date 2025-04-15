@@ -14,7 +14,7 @@ const voterAccessMiddlware = async (req, res, next) => {
     const settings = await fetchSettings();
 
     if (settings?.ipRestrictionEnabled) {
-      const clientIP = req.ip;
+      const clientIP = req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
       const allowed = ipRangeCheck(clientIP, settings.allowedIPs);
 
       if (!allowed) {

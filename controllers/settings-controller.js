@@ -18,7 +18,7 @@ const getSettingsFromDB = async (req, res) => {
 
 const createSettings = async (req, res) => {
   try {
-    const settingsData = req.body;
+    const settingsData = { ...req.body };
 
     if (req.user.role !== "admin") {
       return UnauthenticatedError("Only admin is able to create Elections");
@@ -41,7 +41,7 @@ const createSettings = async (req, res) => {
 const updateSettings = async (req, res) => {
   try {
     const { id: settingID } = req.params;
-    const update = req.body;
+    const update = { ...req.body };
 
     if (req.user.role !== "admin") {
       return UnauthenticatedError("Only admin is able to update Elections");

@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
   title: VoteESN-API
   version: 2.1.1
@@ -83,7 +83,7 @@ paths:
               schema:
                 type: object
                 example:
-                  - { "ipRestrictionEnabled": false }
+                  -  ipRestrictionEnabled: false 
         responses:
           '200':
             description: Successful response
@@ -106,9 +106,10 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              type: String
               example:
-                - { "ipRestrictionEnabled":true, "allowedIPs": ["123.456.789.22", "123.131.213.2" ]}
+                  - ipRestrictionEnabled: true, 
+                    allowedIPs: ["123.456.789.22", "123.131.213.2" ]
       responses:
         '200':
           description: Successful response
