@@ -1,7 +1,7 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 2.1.1
+  version: 2.1.2
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -27,7 +27,7 @@ paths:
         - Register/Login
       summary: Register
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       description: >-
         This is a POST request, submitting data to an API via the request body.
       requestBody:
@@ -36,11 +36,11 @@ paths:
             schema:
               type: object
               example:
-                name: ''
-                email: ''
-                password: ''
+                name: ""
+                email: ""
+                password: ""
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /auth/login:
@@ -54,10 +54,10 @@ paths:
             schema:
               type: object
               example:
-                email: ''
-                password: ''
+                email: ""
+                password: ""
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /admin/voter/settings:
@@ -66,52 +66,54 @@ paths:
         - Admin / election > IP Settings
       summary: Get IP Settings From DB
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response
 
     post:
-        tags:
-          - Admin / election > IP Settings
-        summary: Create IP Settings
-        security:
+      tags:
+        - Admin / election > IP Settings
+      summary: Create IP Settings
+      security:
         - bearerAuth: []
-        requestBody:
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  -  ipRestrictionEnabled: false 
-        responses:
-          '200':
-            description: Successful response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                ipRestrictionEnabled: false
+      responses:
+        "200":
+          description: Successful response
 
-  /admin/voter/settings/{id}:          
+  /admin/voter/settings/{id}:
     patch:
       tags:
         - Admin / election > IP Settings
       summary: Update IP Settings
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: IP Setting ID
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: IP Setting ID
       requestBody:
         content:
           application/json:
             schema:
               type: String
               example:
-                  - ipRestrictionEnabled: true, 
-                    allowedIPs: ["123.456.789.22", "123.131.213.2" ]
+                ipRestrictionEnabled: true,
+                allowedIPs:
+                  - "123.456.789.22"
+                  - "123.131.213.2"
       responses:
-        '200':
+        "200":
           description: Successful response
 
     delete:
@@ -119,16 +121,16 @@ paths:
         - Admin / election > IP Settings
       summary: Delete IP Settings
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: IP Settings ID
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: IP Settings ID
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /user/voter:
@@ -137,9 +139,9 @@ paths:
         - Voter / User
       summary: getAllElection
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /user/voter/{id}:
@@ -148,7 +150,7 @@ paths:
         - Voter / User
       summary: getOneElection
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -163,7 +165,7 @@ paths:
             type: string
           description: "Authentication token"
       responses:
-        '200':
+        "200":
           description: Successful response
 
     post:
@@ -171,20 +173,20 @@ paths:
         - Voter / User
       summary: submitVote
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: "Election ID"
-      - in: query
-        name: token
-        required: true
-        schema:
+        - in: path
+          name: id
+          schema:
             type: string
-        description: "Authentication token"
+          required: true
+          description: "Election ID"
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: "Authentication token"
       requestBody:
         content:
           application/json:
@@ -194,7 +196,7 @@ paths:
                 - question: Why did you do that?
                   selectedOption: I don't know
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /admin/election:
@@ -203,7 +205,7 @@ paths:
         - Admin / election > Election Controllers
       summary: createElection
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -217,7 +219,7 @@ paths:
                       - text: Yes
                       - text: No
       responses:
-        '200':
+        "200":
           description: Successful response
 
     get:
@@ -225,9 +227,9 @@ paths:
         - Admin / election > Election Controllers
       summary: getAllElection
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /admin/election/{id}:
@@ -236,7 +238,7 @@ paths:
         - Admin / election > Election Controllers
       summary: getOneElection
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -244,7 +246,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
 
     patch:
@@ -252,14 +254,14 @@ paths:
         - Admin / election > Election Controllers
       summary: updateElection
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: Election ID
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Election ID
       requestBody:
         content:
           application/json:
@@ -273,7 +275,7 @@ paths:
                       - text: Yes
                       - text: No
       responses:
-        '200':
+        "200":
           description: Successful response
 
     delete:
@@ -281,16 +283,16 @@ paths:
         - Admin / election > Election Controllers
       summary: deleteElection
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: Election ID
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Election ID
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /admin/election/tokens/{id}:
@@ -299,7 +301,7 @@ paths:
         - Admin / election > Voter Access Tokens
       summary: getAccessCodes
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -307,9 +309,8 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
-          
 
   /admin/election/{id}/generate-qr:
     post:
@@ -317,24 +318,24 @@ paths:
         - Admin / election > Voter Access QR
       summary: generate QR Codes and Tokens
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: Election ID
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Election ID
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                electionId: ''
+                electionId: ""
                 numToken: 5
       responses:
-        '200':
+        "200":
           description: Successful response
 
     get:
@@ -342,16 +343,16 @@ paths:
         - Admin / election > Voter Access QR
       summary: Get QR codes ZIP
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: Election ID
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Election ID
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/zip:
@@ -364,16 +365,16 @@ paths:
         - Admin / election > Voter Access QR
       summary: Delete Access QR codes and Tokens
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-        description: Election ID
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Election ID
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /admin/system/users:
@@ -382,9 +383,9 @@ paths:
         - Admin / election > User Controllers
       summary: Get Users
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response
 
     post:
@@ -392,19 +393,19 @@ paths:
         - Admin / election > User Controllers
       summary: createUser
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                name: ''
-                email: ''
-                password: ''
-                role: ''
+                name: ""
+                email: ""
+                password: ""
+                role: ""
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /admin/system/users/{id}:
@@ -413,7 +414,7 @@ paths:
         - Admin / election > User Controllers
       summary: Update User
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -426,9 +427,9 @@ paths:
             schema:
               type: object
               example:
-                role: ''
+                role: ""
       responses:
-        '200':
+        "200":
           description: Successful response
 
     delete:
@@ -436,7 +437,7 @@ paths:
         - Admin / election > User Controllers
       summary: deleteUser
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -444,7 +445,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
 
   /admin/election/{id}/results:
@@ -453,7 +454,7 @@ paths:
         - Admin / election > Results
       summary: Get Results
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -461,7 +462,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
 
     delete:
@@ -469,7 +470,7 @@ paths:
         - Admin / election > Results
       summary: DeleteResults
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -477,5 +478,5 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
