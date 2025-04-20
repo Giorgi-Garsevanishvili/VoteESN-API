@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 2.1.2
+  version: 2.2.0
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -20,7 +20,28 @@ tags:
   - name: Admin / election > Voter Access QR
   - name: Admin / election > Results
   - name: Admin / election > IP Settings
+  - name: Admin / election > Email Notification 
 paths:
+  /admin/election/email:
+    post:
+      tags:
+        - Admin / election > Email Notification
+      summary: Send Access Codes
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                to: ""
+                subject: ""
+                html: ""
+      responses:
+        "200":
+          description: Successful response
+          
   /auth/register:
     post:
       tags:
@@ -106,7 +127,7 @@ paths:
         content:
           application/json:
             schema:
-              type: String
+              type: object
               example:
                 ipRestrictionEnabled: true,
                 allowedIPs:

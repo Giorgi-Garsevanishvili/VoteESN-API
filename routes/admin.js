@@ -6,6 +6,7 @@ const {getUser, updateUser, createUser, deleteUser} = require('../controllers/ad
 const { generateQrCodes, getQRCodes, deleteAccessQR, getAccessCodes } = require("../controllers/admin/accessqr-controllers.js");
 const { getResults, deleteResults } = require("../controllers/admin/results.js");
 const { getSettingsFromDB, createSettings, updateSettings,deleteSettings } = require("../controllers/settings-controller.js");
+const { sendCodes } = require("../controllers/admin/mailer.js");
 
 router.route('/election').get(getAllElection).post(createElection)
 router.route('/election/:id').get(getOneElection).patch(updateElection).delete(deleteElection)
@@ -18,5 +19,6 @@ router.route('/election/:id/results').get(getResults).delete(deleteResults)
 
 router.route('/voter/settings').get(getSettingsFromDB).post(createSettings)
 router.route('/voter/settings/:id').patch(updateSettings).delete(deleteSettings)
+router.route('/election/email').post(sendCodes)
 
 module.exports = router
