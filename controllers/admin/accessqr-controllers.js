@@ -88,6 +88,7 @@ const getAccessCodes = async (req, res) => {
     const tokens = accessTokens.map((el) => ({
       token: el.token,
       used: el.used,
+      sent: el.sent
     }));
 
     res.status(StatusCodes.OK).json({ tokens });

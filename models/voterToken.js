@@ -5,6 +5,7 @@ const voterTokenSchema = new mongoose.Schema({
     electionId: { type: mongoose.Schema.Types.ObjectId, ref: "Election", required: true },
     qrCodeImage: {type:String, required:true},
     used: { type: Boolean, default: false },
+    sent: {type: Boolean, default:false}
 });
 
 module.exports = mongoose.model("VoterToken", voterTokenSchema);
