@@ -16,7 +16,14 @@ const createUser = async (req, res) => {
   emailNotification(
     user.email,
     "New User Created / VoteESN",
-    `<h3>New user created by admin of VoteESN for you email: ${user.email}</h3>`
+    `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; color: #333;">
+      <h2 style="color: #2c3e50;">🎉 Welcome to the System!</h2>
+      <p>Hello <strong>${user.name}</strong>,</p>
+      <p>You’ve been successfully registered by an admin in VoteESN Election system.</p>
+      <p>If you didn’t expect this registration, you can ignore this email.</p>
+      <br>
+      <p style="font-size: 14px; color: #888;">– Your Admin Team</p>
+    </div>`
   );
   res
     .status(StatusCodes.CREATED)
@@ -56,10 +63,42 @@ const updateUser = async (req, res) => {
     );
   }
 
+  const updatedFields = [];
+
+  const { name, email, role, password } = req.body;
+
+  if (name) {
+    updatedFields.push(`Name: ${req.body.name}`);
+  }
+
+  if (email) {
+    updatedFields.push(`Email: ${req.body.email}`);
+  }
+
+  if (role) {
+    updatedFields.push(`Role: ${req.body.role}`);
+  }
+
+  if (password) {
+    updatedFields.push("Password: Please contact Admin if you need it.");
+  }
+
+  const changesHtml = updatedFields.map(field => `<li>${field}</li>`).join("")
+
   emailNotification(
     user.email,
     "Account updated by admin / VoteESN",
-    `<h3>Admin update your account</h3>`
+    `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #fcfcfc; color: #333;">
+      <h2 style="color: #2980b9;">✏️ Your Profile Has Been Updated</h2>
+      <p>Dear <strong>${user.name}</strong>,</p>
+      <p>An administrator has made updates to your account. The following fields were changed:</p>
+       <ul style="line-height: 1.6;">
+        ${changesHtml}
+      </ul>
+      <p>If you have any questions or did not expect this change, please contact the support team.</p>
+      <br>
+      <p style="font-size: 14px; color: #999;">– Admin Team</p>
+    </div>`
   );
 
   res.status(StatusCodes.OK).json({ success: true, data: { user } });
@@ -80,8 +119,15 @@ const deleteUser = async (req, res) => {
 
   emailNotification(
     user.email,
-    "Account deleted!",
-    "<h3>Admin of VoteESN deleted your account, if you think it`s wrong please contact admin</h3>"
+    "⚠️ Account Deleted",
+    `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #fff8f8; color: #333;">
+      <h2 style="color: #c0392b;">⚠️ Account Deleted</h2>
+      <p>Dear <strong>${user.name}</strong>,</p>
+      <p>Your account has been removed from the system by an administrator.</p>
+      <p>If you believe this was a mistake or have any questions, please contact the admin team.</p>
+      <br>
+      <p style="font-size: 14px; color: #999;">– Your Admin Team</p>
+    </div>`
   );
   res.status(StatusCodes.OK).json({
     success: true,
