@@ -1,6 +1,7 @@
+const { file } = require("jszip");
 const nodemailer = require("nodemailer");
 
-const emailNotification = (to, subject, html) => {
+const emailNotification = (to, subject, html, attachment = []) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -16,6 +17,7 @@ const emailNotification = (to, subject, html) => {
       to: to,
       subject: subject,
       html: html,
+      attachments: attachment
     })
     .then(() => {
       console.log("mail sent");
