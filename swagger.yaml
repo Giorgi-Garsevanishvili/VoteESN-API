@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 2.2.1
+  version: 2.2.2
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -22,6 +22,24 @@ tags:
   - name: Admin / election > IP Settings
   - name: Admin / election > Email Notification 
 paths:
+  /user/tokenvalidation:
+    post:
+      tags:
+        - Voter / User
+      summary: Token Validation
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                token: ""
+      responses:
+        "200":
+          description: Successful response
+          
   /admin/election/email:
     post:
       tags:

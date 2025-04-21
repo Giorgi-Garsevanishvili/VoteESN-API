@@ -57,8 +57,30 @@ const submitVote = async (req, res) => {
   }
 };
 
+const validateToken = async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    throw new BadRequestError("Token must be presented!");
+  }
+
+  const candidateToken = await voterToken.find({ token, used: false });
+
+  if (!candidateToken.length) {
+    throw new BadRequestError("Invalid Token");
+  }
+
+  const validatedToken = candidateToken.map((el) => ({
+    token: el.token,
+    electionId: el.electionId
+  }));
+
+  res.status(StatusCodes.OK).json({ data: validatedToken });
+};
+
 module.exports = {
   getAllElection,
   getOneElection,
   submitVote,
+  validateToken,
 };
