@@ -7,6 +7,17 @@ const { BadRequestError } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification");
 const UAParser = require("ua-parser-js");
 
+const parseUserAgent = (uaString) => {
+  const parser = new UAParser();
+  parser.setUA(uaString);
+  const result = parser.getResult();
+
+  return {
+    os: `${result.os.name} ${result.os.version}`,
+    browser: `${result.browser.name} ${result.browser.version}`,
+  };
+};
+
 const generateQrCodes = async (req, res) => {
   try {
     const { numToken } = req.body;
