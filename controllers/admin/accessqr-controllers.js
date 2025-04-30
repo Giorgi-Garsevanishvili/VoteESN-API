@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const VoterToken = require("../../models/voterToken");
 const { BadRequestError } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification");
+const UAParser = require("ua-parser-js");
 
 const generateQrCodes = async (req, res) => {
   try {
@@ -130,9 +131,11 @@ const revealToken = async (req, res) => {
         .json({ message: "No token to display" });
     }
 
+    const clientIP = req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
+    const userAgent = req.get("User-Agent");
+    const { os, browser } = parseUserAgent(userAgent);
+
     const timestamp = new Date().toISOString();
-    const userAgent = req.headers["user-agent"];
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const to = ["support-vote@esn.lv", "webmaster-riga@esn.lv"];
     const subject = "⚠️ Voter Token Reveal Detected! ⚠️";
     const attachment = [
@@ -160,11 +163,15 @@ const revealToken = async (req, res) => {
         </tr>
         <tr>
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>Form</strong></td>
-          <td style="border: 1px solid #ccc; padding: 8px;">${form}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${
+            req.body.form
+          }</td>
         </tr>
         <tr>
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>LS Data</strong></td>
-          <td style="border: 1px solid #ccc; padding: 8px;">${lsdata}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${
+            req.body.lsdata
+          }</td>
         </tr>
         <tr>
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>Timestamp</strong></td>
@@ -172,11 +179,15 @@ const revealToken = async (req, res) => {
         </tr>
         <tr>
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>IP Address</strong></td>
-          <td style="border: 1px solid #ccc; padding: 8px;">${ip}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${clientIP}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #ccc; padding: 8px;"><strong>User Agent</strong></td>
-          <td style="border: 1px solid #ccc; padding: 8px;">${userAgent}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;"><strong>OS</strong></td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${os}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ccc; padding: 8px;"><strong>Browser</strong></td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${browser}</td>
         </tr>
       </table>
 
