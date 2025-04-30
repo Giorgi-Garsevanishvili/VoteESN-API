@@ -5,14 +5,14 @@ const voterToken = require("../../models/voterToken.js");
 const Election = require("../../models/election-model.js");
 
 const sendCodes = async (req, res) => {
-  const { to, token } = req.body;
+  const { to, tokenId } = req.body;
 
-  if (!to || !token) {
+  if (!to || !tokenId) {
     throw new BadRequestError("All field is required!");
   }
 
   const tokenCont = await voterToken.findOneAndUpdate(
-    { token: token },
+    { _id: tokenId },
     { sent: true },
     { new: true, runValidators: true }
   );

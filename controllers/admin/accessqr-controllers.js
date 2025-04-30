@@ -86,7 +86,7 @@ const getAccessCodes = async (req, res) => {
     }
 
     const tokens = accessTokens.map((el) => ({
-      token: el.token,
+      tokenId: el._id,
       used: el.used,
       sent: el.sent
     }));
