@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Macondo&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qirvex™ | Smart Elections for the Future</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="Qirvex™" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <meta
+      name="description"
+      content="Qirvex™ is your trusted platform for building and managing secure, digital elections with modern tools."
+    />
+    <style>
+      /* Branding and Footer Styling */
+
+      * {
+        -webkit-user-select: none; /* Disable text selection in webkit browsers */
+        -moz-user-select: none; /* Disable text selection in Firefox */
+        -ms-user-select: none; /* Disable text selection in IE/Edge */
+        user-select: none; /* Disable text selection in modern browsers */
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: auto;
+        overflow: hidden; /* Prevent overflow within iframe */
+      }
+
+      .branding-container {
+        text-align: center;
+        margin: 0;
+      }
+
+      .brand-name {
+        font-family: "Orbitron", sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #34495e;
+        margin: 0;
+        position: relative;
+        display: inline-block;
+        user-select: none;
+      }
+
+      .tm-logo {
+        font-size: 0.7rem;
+        position: absolute;
+        top: -3px;
+        right: -8px;
+        font-weight: bold;
+        color: #2980b9;
+      }
+
+      .brand-slogan {
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.8rem;
+        color: #7f8c8d;
+        margin: 5px 0;
+        user-select: none;
+      }
+
+      .name-link {
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.8rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+        user-select: none;
+      }
+
+      .name-link a {
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.8rem;
+        color: #2980b9;
+        text-decoration: none;
+        font-weight: 500;
+        outline: none; /* Remove focus outline */
+        user-select: none; /* Prevent selection */
+      }
+
+      .name-link a:hover {
+        color: #3498db;
+        text-decoration: underline;
+      }
+
+      .footer-text {
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.75rem;
+        color: #7f8c8d;
+        margin: 5px 0;
+        font-weight: 500;
+        user-select: none;
+      }
+
+      #year {
+        font-weight: bold;
+        color: #34495e;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Branding and Footer Section -->
+    <div class="branding-container">
+      <h1 class="brand-name">Qirvex <span class="tm-logo">™</span></h1>
+      <p class="brand-slogan">Precision in Every Build.</p>
+      <p class="name-link">
+        by
+        <a href="https://github.com/Giorgi-Garsevanishvili" target="_blank"
+          >Giorgi Garsevanishvili</a
+        >
+      </p>
+      <p class="footer-text">
+        &copy; <span id="year"></span> All Rights Reserved
+      </p>
+    </div>
+
+    <script>
+      // Set current year dynamically
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

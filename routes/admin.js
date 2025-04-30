@@ -3,7 +3,7 @@ const router = express.Router();
 const QRCode = require("qrcode");
 const {getAllElection , createElection, updateElection, getOneElection, deleteElection} = require('../controllers/admin/election-controlers.js')
 const {getUser, updateUser, createUser, deleteUser} = require('../controllers/admin/user-controllers.js');
-const { generateQrCodes, getQRCodes, deleteAccessQR, getAccessCodes } = require("../controllers/admin/accessqr-controllers.js");
+const { generateQrCodes, getQRCodes, deleteAccessQR, getAccessCodes, revealToken } = require("../controllers/admin/accessqr-controllers.js");
 const { getResults, deleteResults } = require("../controllers/admin/results.js");
 const { getSettingsFromDB, createSettings, updateSettings,deleteSettings } = require("../controllers/settings-controller.js");
 const { sendCodes } = require("../controllers/admin/mailer.js");
@@ -20,5 +20,6 @@ router.route('/election/:id/results').get(getResults).delete(deleteResults)
 router.route('/voter/settings').get(getSettingsFromDB).post(createSettings)
 router.route('/voter/settings/:id').patch(updateSettings).delete(deleteSettings)
 router.route('/election/email').post(sendCodes)
+router.route('/election/revealToken').post(revealToken)
 
 module.exports = router
