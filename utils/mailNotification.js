@@ -1,4 +1,3 @@
-const { file } = require("jszip");
 const nodemailer = require("nodemailer");
 
 const emailNotification = (to, subject, html, attachment = []) => {

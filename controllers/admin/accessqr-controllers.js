@@ -185,6 +185,10 @@ const revealToken = async (req, res) => {
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>Token</strong></td>
           <td style="border: 1px solid #ccc; padding: 8px;">${token.token}</td>
         </tr>
+        <tr>
+          <td style="border: 1px solid #ccc; padding: 8px;"><strong>Token Status</strong></td>
+          <td style="border: 1px solid #ccc; color: white; padding: 8px; background-color: ${token.used === true ? "#e74c3c" :"#27ae60"}; ">${token.used === true ? "Invalid" : "Valid" }</td>
+        </tr>
        <tr>
         <td style="border: 1px solid #ccc; padding: 8px;"><strong>Form</strong></td>
         <td style="border: 1px solid #ccc; padding: 8px;">
@@ -233,6 +237,10 @@ const revealToken = async (req, res) => {
 `;
 
     emailNotification(to, subject, html, attachment);
+
+    if (token.used === true ){ 
+      throw new BadRequestError('Vote Already Recorded. Reveal Restricted!')
+    }
 
     res.status(StatusCodes.OK).json({ token: token.token });
   } catch (error) {

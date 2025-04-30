@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 2.4.0
+  version: 2.4.2
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -74,8 +74,8 @@ paths:
               type: object
               example:
                 tokenId: ""
-                form: ""
-                lsdata: ""
+                form: {}
+                lsdata: {}
       responses:
         "200":
           description: Successful response        
