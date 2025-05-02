@@ -47,6 +47,8 @@ const login = async (req, res, next) => {
     throw new UnauthenticatedError("Wrong Password!");
   }
 
+  await User.findByIdAndUpdate(user.id, { lastLogin: new Date() });
+
   const clientIP = req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
   const token = user.createJWT();
   const userAgent = req.get("User-Agent");
@@ -73,7 +75,10 @@ const login = async (req, res, next) => {
   );
   res
     .status(StatusCodes.OK)
-    .json({ user: { name: user.name, role: user.role }, token });
+    .json({
+      user: { name: user.name, role: user.role, lastLogin: user.lastLogin },
+      token,
+    });
 };
 
 module.exports = { register, login };

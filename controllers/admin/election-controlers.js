@@ -5,6 +5,7 @@ const {
   BadRequestError,
   NotFoundError,
 } = require("../../errors");
+const User = require("../../models/user-model");
 
 const createElection = async (req, res) => {
   try {
@@ -42,7 +43,11 @@ const getOneElection = async (req, res) => {
     if(!election){
       throw new NotFoundError(`Election with id:${electionID} not found!`)
     }
-    res.status(StatusCodes.OK).json({ success: true, data: election });
+
+    const createdBy = await User.findOne(election.createdBy)
+    
+
+    res.status(StatusCodes.OK).json({ success: true, data: election, author: createdBy.name });
   } catch (error) {
     throw new BadRequestError(error);
   }

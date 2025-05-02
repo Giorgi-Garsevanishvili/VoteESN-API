@@ -1,3 +1,4 @@
+const { date } = require("joi");
 const mongoose = require("mongoose");
 
 const OptionsSchema = new mongoose.Schema({
@@ -10,14 +11,19 @@ const TopicSchema = new mongoose.Schema({
   options: [OptionsSchema],
 });
 
-const ElectionSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  topics: [TopicSchema],
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+const ElectionSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    topics: [TopicSchema],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
-});
+  {
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+  }
+);
 
-module.exports = mongoose.model('Election', ElectionSchema)
+module.exports = mongoose.model("Election", ElectionSchema);

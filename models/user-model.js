@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema({
     },
     default: "voter",
   },
+  lastLogin: {
+    type: Date,
+    default: null
+  }
 });
 
 UserSchema.pre("save", async function () {
