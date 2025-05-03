@@ -44,12 +44,25 @@ const getOneElection = async (req, res) => {
       throw new NotFoundError(`Election with id:${electionID} not found!`);
     }
 
+    let updatedByName;
+
     const createdBy = await User.findOne(election.createdBy);
-    const updatedBy = await User.findOne(election.updatedBy)
+
+    if (election.updatedBy !== null) {
+      updatedBy = await User.findOne(election.updatedBy);
+      updatedByName = updatedBy.name
+    } else {
+      updatedByName = "No Updates Recorded"
+    }
 
     res
       .status(StatusCodes.OK)
-      .json({ success: true, data: election, author: createdBy.name, updatedBy: updatedBy.name });
+      .json({
+        success: true,
+        data: election,
+        author: createdBy.name,
+        updatedBy: updatedByName
+      });
   } catch (error) {
     throw new BadRequestError(error);
   }
