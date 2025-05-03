@@ -1,4 +1,4 @@
-const { date } = require("joi");
+const { date, required } = require("joi");
 const mongoose = require("mongoose");
 
 const OptionsSchema = new mongoose.Schema({
@@ -19,6 +19,12 @@ const ElectionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      default: null,
     },
   },
   {

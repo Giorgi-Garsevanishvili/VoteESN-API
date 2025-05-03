@@ -40,14 +40,16 @@ const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
     const election = await Election.findOne({ _id: electionID });
-    if(!election){
-      throw new NotFoundError(`Election with id:${electionID} not found!`)
+    if (!election) {
+      throw new NotFoundError(`Election with id:${electionID} not found!`);
     }
 
-    const createdBy = await User.findOne(election.createdBy)
-    
+    const createdBy = await User.findOne(election.createdBy);
+    const updatedBy = await User.findOne(election.updatedBy)
 
-    res.status(StatusCodes.OK).json({ success: true, data: election, author: createdBy.name });
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, data: election, author: createdBy.name, updatedBy: updatedBy.name });
   } catch (error) {
     throw new BadRequestError(error);
   }
@@ -65,15 +67,18 @@ const updateElection = async (req, res) => {
       {
         _id: electionID,
       },
-      req.body,
+      {
+        ...req.body,
+        updatedBy: req.user.userID,
+      },
       {
         new: true,
         runValidators: true,
       }
     );
 
-    if(!election){
-      throw new NotFoundError(`Election with id:${electionID} not found!`)
+    if (!election) {
+      throw new NotFoundError(`Election with id:${electionID} not found!`);
     }
     res.status(StatusCodes.OK).json({ election });
   } catch (error) {
