@@ -50,19 +50,21 @@ const getOneElection = async (req, res) => {
 
     if (election.updatedBy !== null) {
       updatedBy = await User.findOne(election.updatedBy);
-      updatedByName = updatedBy.name
+      if (updatedBy !== null) {
+        updatedByName = updatedBy.name;
+      } else {
+        updatedByName = "User Not found";
+      }
     } else {
-      updatedByName = "No Updates Recorded"
+      updatedByName = "No Updates Recorded";
     }
 
-    res
-      .status(StatusCodes.OK)
-      .json({
-        success: true,
-        data: election,
-        author: createdBy.name,
-        updatedBy: updatedByName
-      });
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: election,
+      author: createdBy.name,
+      updatedBy: updatedByName,
+    });
   } catch (error) {
     throw new BadRequestError(error);
   }
