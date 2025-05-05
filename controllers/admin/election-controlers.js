@@ -45,15 +45,25 @@ const getOneElection = async (req, res) => {
     }
 
     let updatedByName;
+    let createdByName;
 
-    const createdBy = await User.findOne(election.createdBy);
+    if (election.createdBy !== null) {
+      const createdBy = await User.findOne(election.createdBy);
+      if (createdBy !== null) {
+        createdByName = createdBy.name;
+      } else {
+        createdByName = "User Not Found / Deleted or modified";
+      }
+    } else {
+      createdByName = "Something Went Wrong! Can`t Display Name";
+    }
 
     if (election.updatedBy !== null) {
-      updatedBy = await User.findOne(election.updatedBy);
+      const updatedBy = await User.findOne(election.updatedBy);
       if (updatedBy !== null) {
         updatedByName = updatedBy.name;
       } else {
-        updatedByName = "User Not found";
+        updatedByName = "User Not found / Deleted or modified";
       }
     } else {
       updatedByName = "No Updates Recorded";
@@ -62,7 +72,7 @@ const getOneElection = async (req, res) => {
     res.status(StatusCodes.OK).json({
       success: true,
       data: election,
-      author: createdBy.name,
+      author: createdByName,
       updatedBy: updatedByName,
     });
   } catch (error) {
