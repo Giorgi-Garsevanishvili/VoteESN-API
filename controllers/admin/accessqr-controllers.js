@@ -61,14 +61,21 @@ const getQRCodes = async (req, res) => {
     const zip = new JSZip();
     const timestamp = Date.now();
 
-    qrData.forEach((item, index) => {
+    for (const [index, item] of qrData.entries()) {
+      const tokenID = item._id;
+      const updatedToken = await VoterToken.findOneAndUpdate(
+        { _id: tokenID },
+        { sent: true },
+        { new: true, runValidators: true }
+      );
+
       const base64Data = item.qrCodeImage.replace(
         /^data:image\/png;base64,/,
         ""
       );
       const buffer = Buffer.from(base64Data, "base64");
       zip.file(`access_QR_${index + 1}.png`, buffer);
-    });
+    }
 
     const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
 
@@ -163,7 +170,9 @@ const revealToken = async (req, res) => {
           ([key, value]) => `
             <tr>
               <td style="border: 1px solid #ccc; padding: 8px;"><strong>${key}</strong></td>
-              <td style="border: 1px solid #ccc; padding: 8px;">${value ?? 'N/A'}</td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${
+                value ?? "N/A"
+              }</td>
             </tr>
           `
         )
@@ -187,7 +196,9 @@ const revealToken = async (req, res) => {
         </tr>
         <tr>
           <td style="border: 1px solid #ccc; padding: 8px;"><strong>Token Status</strong></td>
-          <td style="border: 1px solid #ccc; color: white; padding: 8px; background-color: ${token.used === true ? "#e74c3c" :"#27ae60"}; ">${token.used === true ? "Invalid" : "Valid" }</td>
+          <td style="border: 1px solid #ccc; color: white; padding: 8px; background-color: ${
+            token.used === true ? "#e74c3c" : "#27ae60"
+          }; ">${token.used === true ? "Invalid" : "Valid"}</td>
         </tr>
        <tr>
         <td style="border: 1px solid #ccc; padding: 8px;"><strong>Form</strong></td>
@@ -238,8 +249,8 @@ const revealToken = async (req, res) => {
 
     emailNotification(to, subject, html, attachment);
 
-    if (token.used === true ){ 
-      throw new BadRequestError('Vote Already Recorded. Reveal Restricted!')
+    if (token.used === true) {
+      throw new BadRequestError("Vote Already Recorded. Reveal Restricted!");
     }
 
     res.status(StatusCodes.OK).json({ token: token.token });
