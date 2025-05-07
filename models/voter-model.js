@@ -12,7 +12,6 @@ const VoterSchema = new mongoose.Schema({
       selectedOption: {type:String, required: true}
     },
   ],
-  usedQRCode: {type:String, required:true, unique:true}
 });
 
 module.exports = mongoose.model("VoterModel", VoterSchema)

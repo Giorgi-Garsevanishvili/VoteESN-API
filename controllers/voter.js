@@ -36,7 +36,7 @@ const submitVote = async (req, res) => {
     const { id: electionId } = req.params;
     const usedQRCode = req.voterQR.token;
     const answer = req.body;
-    const vote = await VoterModel.create([{ electionId, answer, usedQRCode }], {
+    const vote = await VoterModel.create([{ electionId, answer }], {
       session,
     });
 
@@ -72,7 +72,7 @@ const validateToken = async (req, res) => {
 
   const validatedToken = candidateToken.map((el) => ({
     token: el.token,
-    electionId: el.electionId
+    electionId: el.electionId,
   }));
 
   res.status(StatusCodes.OK).json({ data: validatedToken });
