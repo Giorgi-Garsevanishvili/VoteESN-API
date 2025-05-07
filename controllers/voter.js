@@ -7,7 +7,7 @@ const { default: mongoose } = require("mongoose");
 
 const getAllElection = async (req, res) => {
   try {
-    const allElections = await Election.find({});
+    const allElections = await Election.find({ section: req.user.section });
     res.status(StatusCodes.OK).json({
       success: true,
       nbHits: allElections.length,
@@ -21,7 +21,10 @@ const getAllElection = async (req, res) => {
 const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
-    const election = await Election.findOne({ _id: electionID });
+    const election = await Election.findOne({
+      _id: electionID,
+      section: req.user.section,
+    });
     res.status(StatusCodes.OK).json({ success: true, data: election });
   } catch (error) {
     throw new BadRequestError(error);
@@ -36,12 +39,15 @@ const submitVote = async (req, res) => {
     const { id: electionId } = req.params;
     const usedQRCode = req.voterQR.token;
     const answer = req.body;
-    const vote = await VoterModel.create([{ electionId, answer }], {
-      session,
-    });
+    const vote = await VoterModel.create(
+      [{ electionId, answer, section: req.user.section }],
+      {
+        session,
+      }
+    );
 
     await voterToken.findOneAndUpdate(
-      { token: usedQRCode },
+      { token: usedQRCode, section: req.user.section },
       { used: true },
       { new: true, runValidators: true }
     );
@@ -64,7 +70,11 @@ const validateToken = async (req, res) => {
     throw new BadRequestError("Token must be presented!");
   }
 
-  const candidateToken = await voterToken.find({ token, used: false });
+  const candidateToken = await voterToken.find({
+    token,
+    used: false,
+    section: req.user.section,
+  });
 
   if (!candidateToken.length) {
     throw new BadRequestError("Invalid Token");
@@ -73,6 +83,7 @@ const validateToken = async (req, res) => {
   const validatedToken = candidateToken.map((el) => ({
     token: el.token,
     electionId: el.electionId,
+    section: req.user.section,
   }));
 
   res.status(StatusCodes.OK).json({ data: validatedToken });

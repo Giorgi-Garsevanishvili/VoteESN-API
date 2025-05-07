@@ -22,7 +22,7 @@ const generateQrCodes = async (req, res) => {
   try {
     const { numToken } = req.body;
     const { id: electionId } = req.params;
-
+    const { section } = req.user;
     if (!numToken || !electionId) {
       throw new BadRequestError("QR code amount or ElectionID is missing");
     }
@@ -32,7 +32,7 @@ const generateQrCodes = async (req, res) => {
     for (let i = 0; i < numToken; i++) {
       const token = uuidv4();
       const qrCodeImage = await QRCode.toDataURL(token);
-      await VoterToken.create({ token, electionId, qrCodeImage });
+      await VoterToken.create({ token, electionId, qrCodeImage, section });
 
       accessToken.push(token);
       qrCodes.push(qrCodeImage);
@@ -41,6 +41,7 @@ const generateQrCodes = async (req, res) => {
       success: true,
       QRcodes: { qrCodes },
       AccessTokens: { accessToken },
+      Section: section,
     });
   } catch (error) {
     throw new BadRequestError(error);
@@ -50,12 +51,12 @@ const generateQrCodes = async (req, res) => {
 const getQRCodes = async (req, res) => {
   try {
     const { id: electionId } = req.params;
-    const qrData = await VoterToken.find({ electionId });
+    const qrData = await VoterToken.find({ electionId, section: req.user.section });
 
     if (!qrData.length) {
       return res
         .status(404)
-        .json({ error: "No tokens found for this election" });
+        .json({ error: "No tokens found for this election in your section" });
     }
 
     const zip = new JSZip();
@@ -97,18 +98,19 @@ const getQRCodes = async (req, res) => {
 const getAccessCodes = async (req, res) => {
   try {
     const { id: electionId } = req.params;
-    const accessTokens = await VoterToken.find({ electionId });
+    const accessTokens = await VoterToken.find({ electionId, section: req.user.section });
 
     if (!accessTokens.length) {
       return res
         .status(404)
-        .json({ error: "No tokens found for this election" });
+        .json({ error: "No tokens found for this election in your section" });
     }
 
     const tokens = accessTokens.map((el) => ({
       tokenId: el._id,
       used: el.used,
       sent: el.sent,
+      section: req.user.section
     }));
 
     res.status(StatusCodes.OK).json({ tokens });
@@ -120,7 +122,7 @@ const getAccessCodes = async (req, res) => {
 const deleteAccessQR = async (req, res) => {
   const { id: electionId } = req.params;
 
-  const deletedTokens = await VoterToken.deleteMany({ electionId });
+  const deletedTokens = await VoterToken.deleteMany({ electionId, section: req.user.section });
 
   if (deletedTokens.deletedCount === 0) {
     throw new BadRequestError("Failed to delete tokens");

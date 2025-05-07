@@ -10,7 +10,7 @@ const emailNotification = require("../../utils/mailNotification");
 const bcrypt = require("bcryptjs");
 
 const createUser = async (req, res) => {
-  const user = new User({ ...req.body });
+  const user = new User({ ...req.body, section: req.user.section });
   const token = user.createJWT();
   await user.save();
   emailNotification(
@@ -27,11 +27,11 @@ const createUser = async (req, res) => {
   );
   res
     .status(StatusCodes.CREATED)
-    .json({ success: true, user: { userName: user.name }, token });
+    .json({ success: true, user: { userName: user.name, userSection: user.section }, token });
 };
 
 const getUser = async (req, res) => {
-  const user = await User.find();
+  const user = await User.find({section: [req.user.section, "Demo"]});
   if (!user) {
     throw new NotFoundError("Currently there is no any user");
   }
@@ -48,7 +48,7 @@ const updateUser = async (req, res) => {
     req.body.password = await bcrypt.hash(req.body.password, salt);
   }
 
-  const user = await User.findOneAndUpdate({ _id: userID }, req.body, {
+  const user = await User.findOneAndUpdate({ _id: userID, section: req.user.section }, req.body, {
     new: true,
     runValidators: true,
   });
@@ -59,7 +59,7 @@ const updateUser = async (req, res) => {
 
   if (!user) {
     throw new NotFoundError(
-      `Currently there is no any user with id: ${userID}`
+      `Currently there is no any user with id: ${userID} in your section`
     );
   }
 
@@ -111,10 +111,10 @@ const deleteUser = async (req, res) => {
     return UnauthenticatedError("Only admin is able to update Elections");
   }
 
-  const user = await User.findByIdAndDelete(userID);
+  const user = await User.findOneAndDelete({_id: userID, section: [req.user.section, "Demo"] });
 
   if (!user) {
-    throw new NotFoundError(`user with id:${userID} not found!`);
+    throw new NotFoundError(`user with id:${userID} not found in your section!`);
   }
 
   emailNotification(

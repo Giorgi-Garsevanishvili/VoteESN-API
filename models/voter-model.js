@@ -9,9 +9,18 @@ const VoterSchema = new mongoose.Schema({
   answer: [
     {
       question: { type: String, required: true },
-      selectedOption: {type:String, required: true}
+      selectedOption: { type: String, required: true },
     },
   ],
+  section: {
+    type: String,
+    required: true,
+    enum: {
+      values: ["Latvia", "Riga", "Jelgava", "Valmiera", "Global", "Demo"],
+      message: "{value} Doesn`t exist or Is not Available",
+    },
+    default: "Demo",
+  },
 });
 
-module.exports = mongoose.model("VoterModel", VoterSchema)
+module.exports = mongoose.model("VoterModel", VoterSchema);

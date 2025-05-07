@@ -24,6 +24,15 @@ const ElectionSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+    section: {
+      type: String,
+      required: true,
+      enum: {
+        values: ["Latvia", "Riga", "Jelgava", "Valmiera", "Global", "Demo"],
+        message: "{value} Doesn`t exist or Is not Available",
+      },
+      default: "Demo",
+    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },

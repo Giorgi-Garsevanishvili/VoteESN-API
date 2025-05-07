@@ -16,17 +16,42 @@ const parseUserAgent = (uaString) => {
 };
 
 const register = async (req, res) => {
-  const user = new User({ ...req.body });
+  const user = new User({ ...req.body, section: "Demo" });
   const token = user.createJWT();
   await user.save();
   emailNotification(
     user.email,
     "successfully registered",
-    `<h1>Dear ${user.name}, you successfully registered on ESN Riga voting system with email: ${user.email}. In case of any concern please contact ESN Riga</h1>`
+    `<!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Registration Successful</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px;">
+        <div style="max-width: 600px; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: auto;">
+          <h1 style="color: #333;">Dear ${user.name},</h1>
+          <p style="font-size: 16px; color: #555;">
+            You have successfully registered on the <strong>VoteESN</strong> platform with the email: <strong>${user.email}</strong>.
+          </p>
+          <p style="font-size: 16px; color: #555;">
+            Your current section is: <strong>${user.section}</strong>.
+          </p>
+          <p style="font-size: 16px; color: #555;">
+            Please ask your section admin to add you to the local section.
+          </p>
+          <p style="font-size: 16px; color: #555;">
+            In case of any concerns, feel free to contact <strong>Qirvex™</strong>.
+          </p>
+          <p style="margin-top: 30px; font-size: 14px; color: #999;">Thank you for being part of the ESN community!</p>
+        </div>
+      </body>
+      </html>
+      `
   );
   res
     .status(StatusCodes.CREATED)
-    .json({ user: { name: user.name }, token: token });
+    .json({ user: { name: user.name, section: user.section }, token: token });
 };
 
 const login = async (req, res, next) => {
@@ -73,12 +98,10 @@ const login = async (req, res, next) => {
       <p style="font-size: 14px; color: #777;">– Security Team</p>
     </div>`
   );
-  res
-    .status(StatusCodes.OK)
-    .json({
-      user: { name: user.name, role: user.role, lastLogin: user.lastLogin },
-      token,
-    });
+  res.status(StatusCodes.OK).json({
+    user: { name: user.name, role: user.role, lastLogin: user.lastLogin },
+    token,
+  });
 };
 
 module.exports = { register, login };

@@ -4,6 +4,15 @@ const ipv4Regex =
   /^(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)$/;
 
 const SettingsSchema = new mongoose.Schema({
+  section: {
+    type: String,
+    required: true,
+    enum:{ 
+      values: ["Latvia", "Riga", "Jelgava", "Valmiera", "Global", "Demo"],
+      message: "{value} Doesn`t exist or Is not Available"  
+      },
+    default: 'Demo'
+  },
   ipRestrictionEnabled: {
     type: Boolean,
     required: true,

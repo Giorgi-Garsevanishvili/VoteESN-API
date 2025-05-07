@@ -18,6 +18,7 @@ const verifyQrTokenMiddleware = async (req, res, next) => {
       token,
       used: false,
       electionId: id,
+      section: req.user.section
     });
 
     if (!voterQR) {

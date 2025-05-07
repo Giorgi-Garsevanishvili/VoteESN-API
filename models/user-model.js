@@ -32,6 +32,15 @@ const UserSchema = new mongoose.Schema({
     },
     default: "voter",
   },
+  section: {
+    type: String,
+    required: true,
+    enum:{ 
+      values: ["Latvia", "Riga", "Jelgava", "Valmiera", "Global", "Demo"],
+      message: "{value} Doesn`t exist or Is not Available"  
+      },
+    default: 'Demo'
+  },
   lastLogin: {
     type: Date,
     default: null
@@ -46,7 +55,7 @@ UserSchema.pre("save", async function () {
 
 UserSchema.methods.createJWT = function () {
   return jwt.sign(
-    { userID: this._id, name: this.name, role: this.role },
+    { userID: this._id, name: this.name, role: this.role, section: this.section },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_LIFETIME }
   );

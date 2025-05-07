@@ -4,7 +4,7 @@ const Settings = require("../models/setting-model");
 
 const getSettingsFromDB = async (req, res) => {
   try {
-    const settings = await Settings.find({});
+    const settings = await Settings.find({section: req.user.section});
     if (settings.length < 1) {
       return res
         .status(StatusCodes.OK)
@@ -18,7 +18,7 @@ const getSettingsFromDB = async (req, res) => {
 
 const createSettings = async (req, res) => {
   try {
-    const settingsData = { ...req.body };
+    const settingsData = { ...req.body, section: req.user.section };
 
     if (req.user.role !== "admin") {
       return UnauthenticatedError("Only admin is able to create Elections");
@@ -52,7 +52,7 @@ const updateSettings = async (req, res) => {
     }
 
     const updatedSettings = await Settings.findOneAndUpdate(
-      { _id: settingID },
+      { _id: settingID, section: req.user.section },
       update,
       {
         new: true,
@@ -78,7 +78,7 @@ const deleteSettings = async (req, res) => {
       return UnauthenticatedError("Only admin is able to delete Elections");
     }
     const { id: settingsID } = req.params;
-    const deleteted = await Settings.findOneAndDelete({ _id: settingsID });
+    const deleteted = await Settings.findOneAndDelete({ _id: settingsID, section: req.user.section });
 
     if (!deleteted) {
       throw new NotFoundError(

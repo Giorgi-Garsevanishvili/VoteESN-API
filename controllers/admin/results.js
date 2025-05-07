@@ -6,7 +6,7 @@ const voterModel = require("../../models/voter-model");
 const getResults = async (req, res) => {
   try {
     const { id: electionId } = req.params;
-    const vote = await VoterModel.find({ electionId });
+    const vote = await VoterModel.find({ electionId, section: req.user.section });
     if (vote.length < 1) {
       throw new NotFoundError("Results not found!");
     }
@@ -20,7 +20,7 @@ const getResults = async (req, res) => {
 
 const deleteResults = async (req, res) => {
   const { id: electionId } = req.params;
-  const deletedResults = await voterModel.deleteMany({ electionId });
+  const deletedResults = await voterModel.deleteMany({ electionId, section: req.user.section });
 
   if (!deletedResults) {
     throw new BadRequestError(

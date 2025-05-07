@@ -12,10 +12,10 @@ const createElection = async (req, res) => {
     if (req.user.role !== "admin") {
       throw new UnauthenticatedError("Only admin can make a election");
     }
-
     const election = await Election.create({
       ...req.body,
       createdBy: req.user.userID,
+      section: req.user.section,
     });
     res.status(StatusCodes.CREATED).json({ election });
   } catch (error) {
@@ -25,7 +25,7 @@ const createElection = async (req, res) => {
 
 const getAllElection = async (req, res) => {
   try {
-    const allElections = await Election.find({});
+    const allElections = await Election.find({ section: req.user.section });
     res.status(StatusCodes.OK).json({
       success: true,
       nbHits: allElections.length,
@@ -39,9 +39,12 @@ const getAllElection = async (req, res) => {
 const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
-    const election = await Election.findOne({ _id: electionID });
+    const election = await Election.findOne({
+      _id: electionID,
+      section: req.user.section,
+    });
     if (!election) {
-      throw new NotFoundError(`Election with id:${electionID} not found!`);
+      throw new NotFoundError(`Election with id:${electionID} not found in your section!`);
     }
 
     let updatedByName;
@@ -91,6 +94,7 @@ const updateElection = async (req, res) => {
     const election = await Election.findOneAndUpdate(
       {
         _id: electionID,
+        section: req.user.section,
       },
       {
         ...req.body,
@@ -103,7 +107,7 @@ const updateElection = async (req, res) => {
     );
 
     if (!election) {
-      throw new NotFoundError(`Election with id:${electionID} not found!`);
+      throw new NotFoundError(`Election with id:${electionID} not found in your section!`);
     }
     res.status(StatusCodes.OK).json({ election });
   } catch (error) {
@@ -114,14 +118,18 @@ const updateElection = async (req, res) => {
 const deleteElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
-    const election = await Election.findByIdAndDelete(electionID);
 
     if (req.user.role !== "admin") {
       return UnauthenticatedError("Only admin is able to update Elections");
     }
 
+    const election = await Election.findOneAndDelete({
+      _id: electionID,
+      section: req.user.section,
+    });
+
     if (!election) {
-      throw new BadRequestError(`No election found by ID: ${electionID}`);
+      throw new BadRequestError(`No election found by ID: ${electionID} in your section`);
     }
 
     res.status(StatusCodes.OK).json({

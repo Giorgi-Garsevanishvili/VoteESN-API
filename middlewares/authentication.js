@@ -16,6 +16,7 @@ const authenticationMiddleware = async (req, res, next) => {
       name: payload.name,
       userID: payload.userID,
       role: payload.role,
+      section: payload.section
     };
     next();
   } catch (error) {

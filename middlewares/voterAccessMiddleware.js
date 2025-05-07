@@ -4,7 +4,7 @@ const { BadRequestError } = require("../errors");
 const Settings = require("../models/setting-model");
 
 const fetchSettings = async () => {
-  const settings = await Settings.find({});
+  const settings = await Settings.find({section: req.user.section});
   if (settings.length === 0) return null;
   return settings[0];
 };

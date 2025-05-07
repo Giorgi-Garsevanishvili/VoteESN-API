@@ -12,13 +12,13 @@ const sendCodes = async (req, res) => {
   }
 
   const tokenCont = await voterToken.findOneAndUpdate(
-    { _id: tokenId },
+    { _id: tokenId, section: req.user.section },
     { sent: true },
     { new: true, runValidators: true }
   );
 
   if (tokenCont) {
-    const electionName = await Election.findById(tokenCont.electionId);
+    const electionName = await Election.findOne({_id: tokenCont.electionId, section: req.user.section});
 
     const base64Image = tokenCont.qrCodeImage.replace(
       /^data:image\/\w+;base64,/,
