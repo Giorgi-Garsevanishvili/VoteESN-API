@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/user", voterAccessMiddlware,authenticationMiddleware,authorization('voter'), voterRoute);
+app.use("/api/v1/user", authenticationMiddleware,authorization('voter'),voterAccessMiddlware, voterRoute);
 app.use("/api/v1/admin", authenticationMiddleware,authorization('admin'), adminRoute);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
