@@ -11,7 +11,11 @@ const fetchSettings = async (req) => {
 
 const voterAccessMiddlware = async (req, res, next) => {
   try {
-    const settings = await fetchSettings(req);
+    const settings = await fetchSettings(req); 
+
+    if (!settings){
+      return res.status(StatusCodes.BAD_REQUEST).send("Your section is not setted up.")
+    }
 
     if (settings?.ipRestrictionEnabled) {
       const clientIP = req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
