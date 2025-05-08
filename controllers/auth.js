@@ -99,7 +99,7 @@ const login = async (req, res, next) => {
     </div>`
   );
   res.status(StatusCodes.OK).json({
-    user: { name: user.name, role: user.role, lastLogin: user.lastLogin },
+    user: { name: user.name, role: user.role, lastLogin: user.lastLogin, section: user.section },
     token,
   });
 };
