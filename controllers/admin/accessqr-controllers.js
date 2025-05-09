@@ -6,6 +6,7 @@ const VoterToken = require("../../models/voterToken");
 const { BadRequestError } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification");
 const UAParser = require("ua-parser-js");
+const Election = require("../../models/election-model.js")
 
 const parseUserAgent = (uaString) => {
   const parser = new UAParser();
@@ -25,6 +26,12 @@ const generateQrCodes = async (req, res) => {
     const { section } = req.user;
     if (!numToken || !electionId) {
       throw new BadRequestError("QR code amount or ElectionID is missing");
+    }
+
+    const draftElection = await Election.findOne({_id:electionId, status: "Draft"})
+
+    if(!draftElection){
+      throw new BadRequestError("To Generate Tokens Election Status Must Be Draft")
     }
 
     const accessToken = [];

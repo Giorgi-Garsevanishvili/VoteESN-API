@@ -33,10 +33,39 @@ const ElectionSchema = new mongoose.Schema(
       },
       default: "Demo",
     },
+    status: {
+      type: String,
+      enum: {
+        values: ["Draft", "Ongoing", "Completed", "Archive"],
+        message: "Status can be Draft, Ongoing, Completed or Archive",
+      },
+      default: "Draft",
+    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
   }
 );
+
+ElectionSchema.pre("findOneAndUpdate", async function (next) {
+  const query = this.getQuery();
+  const docToUpdate = await this.model.findOne(query);
+
+  if (!docToUpdate) {
+    return next();
+  }
+
+  if (
+    docToUpdate.status === "Archive" ||
+    docToUpdate.status === "Ongoing" ||
+    docToUpdate.status === "Completed"
+  ) {
+    const err = new Error(`${docToUpdate.status} elections cannot be updated.`);
+    err.status = 400;
+    return next(err);
+  }
+
+  next();
+});
 
 module.exports = mongoose.model("Election", ElectionSchema);
