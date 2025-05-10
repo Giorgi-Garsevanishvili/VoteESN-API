@@ -37,22 +37,22 @@ This is the backend service for **VoteESN**, a secure, section-based digital vot
 
 ## 📂 Folder Structure
 
-📁 VOTEESN-API/
- ├── 📁 controlers/                  # All controller logic for handling API requests
- │   ├── 📁 admin/                   # Admin-specific controller functions (e.g., user management, elections)
- │   ├── 📄 auth.js                  # Handles authentication (login, token creation...)
- │   ├── 📄 settings-controler.js    # Manages global or section-level settings
- │   └── 📄 voter.js                 # Logic related to voter actions (casting vote, viewing elections)
- ├── 📁 db/                          # MongoDB connection setup
- ├── 📁 errors/                      # Custom error classes and handling helpers
- ├── 📁 middlewares/                 # Authentication, authorization, rate limiting, validation, etc.
- ├── 📁 models/                      # Mongoose schemas for users, elections, tokens, etc.
- ├── 📁 routes/                      # Route definitions for admin, voter, and auth
- ├── 📁 utils/                       # Utility functions (email notifications)
- ├── 📄 app.js                       # Main entry point, Express app setup
- └── 📄 .env                         # Environment variables (not committed to version control)
-
-
+VOTEESN-API/
+├── controlers/                  # All controller logic for handling API requests
+│   ├── admin/                   # Admin-specific controller functions (user management, elections)
+│   ├── auth.js                  # Handles authentication (login, token creation, etc.)
+│   ├── settings-controler.js    # Manages global or section-level settings
+│   └── voter.js                 # Logic related to voter actions (casting vote, viewing elections)
+│
+├── db/                          # MongoDB connection setup
+├── errors/                      # Custom error classes and handling helpers
+├── middlewares/                 # Auth, authorization, rate limiting, validation middleware
+├── models/                      # Mongoose schemas (User, Election, Token, etc.)
+├── routes/                      # Route definitions for admin, voter, and auth
+├── utils/                       # Utility functions (email sending, QR code generation, etc.)
+│
+├── app.js                       # Main entry point - initializes Express app
+└── .env                         # Environment variables (excluded from version control)
 
 
 ---
