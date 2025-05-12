@@ -22,7 +22,7 @@ const voterTokenSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: {createdAt: "record_time", updatedAt: "update_time"}
+    timestamps: { createdAt: "record_time" },
   }
 );
 
