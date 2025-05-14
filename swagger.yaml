@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 3.3.0
+  version: 3.4.0
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -13,7 +13,8 @@ components:
 
 tags:
   - name: Register/Login
-  - name: Voter / User
+  - name: Voter / Election
+  - name: Voter / User Controllers
   - name: Admin / election > Election Controllers
   - name: Admin / election > User Controllers
   - name: Admin / election > Voter Access Tokens
@@ -21,8 +22,59 @@ tags:
   - name: Admin / election > Voter Token Reveal
   - name: Admin / election > Results
   - name: Admin / election > IP Settings
-  - name: Admin / election > Email Notification 
+  - name: Admin / election > Email Notification
 paths:
+  /user/account:
+    get:
+      tags:
+        - Voter / User Controllers
+      summary: Get Own Account info
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+
+  /user/account/{id}:
+    patch:
+      tags:
+        - Voter / User Controllers
+      summary: Update Own User
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                role: ""
+      responses:
+        "200":
+          description: Successful response
+
+    delete:
+      tags:
+        - Voter / User Controllers
+      summary: delete Own User
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+
   /user/tokenvalidation:
     post:
       tags:
@@ -40,7 +92,7 @@ paths:
       responses:
         "200":
           description: Successful response
-          
+
   /admin/election/email:
     post:
       tags:
@@ -78,8 +130,8 @@ paths:
                 lsdata: {}
       responses:
         "200":
-          description: Successful response        
-          
+          description: Successful response
+
   /auth/register:
     post:
       tags:

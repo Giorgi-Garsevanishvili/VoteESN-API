@@ -1,9 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
-const { BadRequestError } = require("../errors");
-const Election = require("../models/election-model");
-const voterToken = require("../models/voterToken");
-const VoterModel = require("../models/voter-model");
+const { BadRequestError } = require("../../errors");
+const Election = require("../../models/election-model");
+const voterToken = require("../../models/voterToken");
+const VoterModel = require("../../models/voter-model");
 const { default: mongoose } = require("mongoose");
+const User = require("../../models/user-model");
 
 const getAllElection = async (req, res) => {
   try {
@@ -88,6 +89,7 @@ const validateToken = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ data: validatedToken });
 };
+
 
 module.exports = {
   getAllElection,
