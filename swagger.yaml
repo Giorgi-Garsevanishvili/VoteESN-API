@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 3.4.0
+  version: 3.4.1
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -78,7 +78,7 @@ paths:
   /user/tokenvalidation:
     post:
       tags:
-        - Voter / User
+        - Voter / Election
       summary: Token Validation
       security:
         - bearerAuth: []
@@ -247,7 +247,7 @@ paths:
   /user/voter:
     get:
       tags:
-        - Voter / User
+        - Voter / Election
       summary: getAllElection
       security:
         - bearerAuth: []
@@ -258,7 +258,7 @@ paths:
   /user/voter/{id}:
     get:
       tags:
-        - Voter / User
+        - Voter / Election
       summary: getOneElection
       security:
         - bearerAuth: []
@@ -281,7 +281,7 @@ paths:
 
     post:
       tags:
-        - Voter / User
+        - Voter / Election
       summary: submitVote
       security:
         - bearerAuth: []
