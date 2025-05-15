@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 3.4.1
+  version: 3.4.2
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -35,19 +35,12 @@ paths:
         "200":
           description: Successful response
 
-  /user/account/{id}:
     patch:
       tags:
         - Voter / User Controllers
       summary: Update Own User
       security:
         - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         content:
           application/json:
@@ -65,12 +58,6 @@ paths:
       summary: delete Own User
       security:
         - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: Successful response
