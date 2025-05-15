@@ -7,7 +7,6 @@ const { getAccountInfo, updateAccount, deleteAccount } = require("../controllers
 router.route('/voter').get(getAllElection)
 router.route('/voter/:id').get(verifyQrTokenMiddleware,getOneElection).post(verifyQrTokenMiddleware,submitVote)
 router.route('/tokenvalidation').post(validateToken)
-router.route('/account').get(getAccountInfo)
-router.route('/account/:id').patch(updateAccount).delete(deleteAccount)
+router.route('/account').get(getAccountInfo).patch(updateAccount).delete(deleteAccount)
 
 module.exports = router
