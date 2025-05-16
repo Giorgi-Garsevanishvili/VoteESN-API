@@ -31,7 +31,7 @@ const createUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const user = await User.find({section: [req.user.section, "Demo"]});
+  const user = await User.find({section: [req.user.section, `Requested ${req.user.section}`]});
   if (!user) {
     throw new NotFoundError("Currently there is no any user");
   }
