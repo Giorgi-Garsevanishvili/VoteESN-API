@@ -29,6 +29,7 @@ const VoterSchema = new mongoose.Schema(
           "Requested Jelgava",
           "Requested Valmiera",
           "Requested Global",
+          "Requseted Demo",
         ],
         message: "{value} Doesn`t exist or Is not Available",
       },
