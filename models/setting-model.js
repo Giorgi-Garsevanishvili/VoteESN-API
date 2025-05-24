@@ -7,11 +7,24 @@ const SettingsSchema = new mongoose.Schema({
   section: {
     type: String,
     required: true,
-    enum:{ 
-      values: ["Latvia", "Riga", "Jelgava", "Valmiera", "Global", "Demo"],
-      message: "{value} Doesn`t exist or Is not Available"  
-      },
-    default: 'Demo'
+    enum: {
+      values: [
+        "Latvia",
+        "Riga",
+        "Jelgava",
+        "Valmiera",
+        "Global",
+        "Demo",
+        "Requested Latvia",
+        "Requested Riga",
+        "Requested Jelgava",
+        "Requested Valmiera",
+        "Requested Global",
+        "Requseted Demo",
+      ],
+      message: "{value} Doesn`t exist or Is not Available",
+    },
+    default: "Demo",
   },
   ipRestrictionEnabled: {
     type: Boolean,
