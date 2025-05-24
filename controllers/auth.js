@@ -54,7 +54,7 @@ const register = async (req, res) => {
     .json({ user: { name: user.name, section: user.section }, token: token });
 };
 
-const login = async (req, res, next) => {
+const login = async (req, res) => {
   const normalisedEmail = req.body.email.toLowerCase();
   const { password } = req.body;
 
@@ -99,7 +99,7 @@ const login = async (req, res, next) => {
     </div>`
   );
   res.status(StatusCodes.OK).json({
-    user: { name: user.name, role: user.role, lastLogin: user.lastLogin, section: user.section },
+    user: { name: user.name, role: user.role, lastLogin: user.lastLogin, section: user.section, id: user.id },
     token,
   });
 };
