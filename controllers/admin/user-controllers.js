@@ -27,12 +27,19 @@ const createUser = async (req, res) => {
   );
   res
     .status(StatusCodes.CREATED)
-    .json({ success: true, user: { userName: user.name, userSection: user.section }, token });
+    .json({
+      success: true,
+      user: { userName: user.name, userSection: user.section },
+      token,
+    });
 };
 
 const getUser = async (req, res) => {
-  const user = await User.find({section: [req.user.section, `Requested ${req.user.section}`]});
-  if (!user) {
+  const user = await User.find({
+    section: { $in: [req.user.section, `Requested ${req.user.section}`, "Demo"] },
+  });
+
+  if (!user || user.length === 0) {
     throw new NotFoundError("Currently there is no any user");
   }
 
@@ -48,16 +55,20 @@ const updateUser = async (req, res) => {
     req.body.password = await bcrypt.hash(req.body.password, salt);
   }
 
-  const user = await User.findOneAndUpdate({ _id: userID, section: req.user.section }, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const user = await User.findOneAndUpdate(
+    { _id: userID, section: { $in: [req.user.section, `Requested ${req.user.section}`, "Demo"]} },
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   if (req.user.role !== "admin") {
     return UnauthenticatedError("Only admin is able to update Elections");
   }
 
-  if (!user) {
+  if (!user || user.length === 0) {
     throw new NotFoundError(
       `Currently there is no any user with id: ${userID} in your section`
     );
@@ -83,7 +94,9 @@ const updateUser = async (req, res) => {
     updatedFields.push("Password: Please contact Admin if you need it.");
   }
 
-  const changesHtml = updatedFields.map(field => `<li>${field}</li>`).join("")
+  const changesHtml = updatedFields
+    .map((field) => `<li>${field}</li>`)
+    .join("");
 
   emailNotification(
     user.email,
@@ -111,10 +124,15 @@ const deleteUser = async (req, res) => {
     return UnauthenticatedError("Only admin is able to update Elections");
   }
 
-  const user = await User.findOneAndDelete({_id: userID, section: [req.user.section, "Demo"] });
+  const user = await User.findOneAndDelete({
+    _id: userID,
+    section: { $in: [req.user.section, `Requested ${req.user.section}`, "Demo"]},
+  });
 
-  if (!user) {
-    throw new NotFoundError(`user with id:${userID} not found in your section!`);
+  if (!user || user.length === 0) {
+    throw new NotFoundError(
+      `user with id:${userID} not found in your section!`
+    );
   }
 
   emailNotification(
