@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 3.4.6
+  version: 3.5.0
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -157,6 +157,56 @@ paths:
       responses:
         "200":
           description: Successful response
+        
+  /auth/reset-password-request:
+    post:
+      tags:
+        - Register/Login
+      summary: Password Reset Request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: ""
+      responses:
+        "200":
+          description: Successful response
+                  
+          
+  /auth/reset-password:
+    post:
+      tags: 
+        - Register/Login
+      summary: Reset user password using a token
+      description: Allows a user to reset their password using a valid JWT token sent via query.
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          required: true
+          description: The password reset JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+                  example: "newStrongPassword123"
+      responses:
+        200:
+          description: Password updated successfully
+        400:
+          description: Bad request
+        401:
+          description: Token is expired or invalid
 
   /admin/voter/settings:
     get:

@@ -4,6 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const emailNotification = require("../utils/mailNotification.js");
 const UAParser = require("ua-parser-js");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const parseUserAgent = (uaString) => {
   const parser = new UAParser();
@@ -112,13 +113,13 @@ const login = async (req, res) => {
 };
 
 const resetPasswordRequest = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new BadRequestError("Email is required");
+  }
+
   try {
-    const { email } = req.body;
-
-    if (!email) {
-      throw new BadRequestError("Email is required");
-    }
-
     const user = await User.findOne({ email: email }).exec();
 
     if (!user) {
@@ -161,4 +162,63 @@ const resetPasswordRequest = async (req, res) => {
   }
 };
 
-module.exports = { register, login, resetPasswordRequest };
+const resetPassword = async (req, res) => {
+  const { token } = req.query;
+  const { password } = req.body;
+
+  if (!password) {
+    throw new BadRequestError("Password in missing!");
+  }
+
+  if (!token) {
+    throw new BadRequestError("Token Is not Provided!");
+  }
+
+  const isPasswordChangedAfter = (user, tokenIat) => {
+    if (!user.passwordchangedAt) return false;
+
+    const changeTimeStamp = parseInt(
+      user.passwordchangedAt.getTime() / 1000,
+      10
+    );
+    return changeTimeStamp > tokenIat;
+  };
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const userPayload = {
+      id: payload.userId,
+    };
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.findById(userPayload.id);
+
+    if (!user) {
+      throw new BadRequestError("User Not Found");
+    }
+
+    if(isPasswordChangedAfter(user, payload.iat)){
+      throw new UnauthenticatedError("Token is no longer valid. Password was changed.")
+    }
+
+    await User.findByIdAndUpdate(
+      userPayload.id,
+      { password: hashedPassword, passwordchangedAt: new Date() },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(StatusCodes.OK).send("Password Updated");
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      throw new UnauthenticatedError("Token has expired");
+    }
+    throw new BadRequestError(error)
+  }
+};
+
+module.exports = { register, login, resetPasswordRequest, resetPassword };
