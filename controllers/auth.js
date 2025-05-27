@@ -134,7 +134,7 @@ const resetPasswordRequest = async (req, res) => {
       { expiresIn: "15m" }
     );
 
-    const resetLink = `https://voteesn.qirvex.dev/reset-password?token=${token}`;
+    const resetLink = `https://voteesn.qirvex.dev/src/views/reset-password.html?token=${token}`;
 
     emailNotification(
       user.email,
