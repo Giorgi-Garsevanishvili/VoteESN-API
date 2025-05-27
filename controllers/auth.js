@@ -199,8 +199,10 @@ const resetPassword = async (req, res) => {
       throw new BadRequestError("User Not Found");
     }
 
-    if(isPasswordChangedAfter(user, payload.iat)){
-      throw new UnauthenticatedError("Token is no longer valid. Password was changed.")
+    if (isPasswordChangedAfter(user, payload.iat)) {
+      throw new UnauthenticatedError(
+        "Token is no longer valid. Password was changed."
+      );
     }
 
     await User.findByIdAndUpdate(
@@ -212,12 +214,25 @@ const resetPassword = async (req, res) => {
       }
     );
 
+    emailNotification(
+      user.email,
+      "Your VoteESN Password Has Been Set",
+      `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; color: #333;">
+        <h2 style="color: #2c3e50;">✅ Password Set Successfully</h2>
+        <p>Hello <strong>${user.name}</strong>,</p>
+        <p>Your password has been successfully set for your VoteESN account.</p>
+        <p>If you did not perform this action, please contact your admin immediately.</p>
+        <br>
+        <p style="font-size: 14px; color: #888;">– VoteESN Security Team</p>
+      </div>`
+    );
+
     res.status(StatusCodes.OK).send("Password Updated");
   } catch (error) {
     if (error.name === "TokenExpiredError") {
       throw new UnauthenticatedError("Token has expired");
     }
-    throw new BadRequestError(error)
+    throw new BadRequestError(error);
   }
 };
 
