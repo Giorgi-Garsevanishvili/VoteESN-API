@@ -3,6 +3,8 @@ const User = require("../models/user-model.js");
 const { StatusCodes } = require("http-status-codes");
 const emailNotification = require("../utils/mailNotification.js");
 const UAParser = require("ua-parser-js");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const parseUserAgent = (uaString) => {
   const parser = new UAParser();
@@ -99,9 +101,124 @@ const login = async (req, res) => {
     </div>`
   );
   res.status(StatusCodes.OK).json({
-    user: { name: user.name, role: user.role, lastLogin: user.lastLogin, section: user.section, id: user.id },
+    user: {
+      name: user.name,
+      role: user.role,
+      lastLogin: user.lastLogin,
+      section: user.section,
+      id: user.id,
+    },
     token,
   });
 };
 
-module.exports = { register, login };
+const resetPasswordRequest = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new BadRequestError("Email is required");
+  }
+
+  try {
+    const user = await User.findOne({ email: email }).exec();
+
+    if (!user) {
+      throw new BadRequestError("User with entered email dosn`t exist");
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const resetLink = `https://voteesn.qirvex.dev/reset-password?token=${token}`;
+
+    emailNotification(
+      user.email,
+      "voteESN - Reset Your Password ",
+      `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f0f4f8; color: #333;">
+        <h2 style="color: #2d3e50;">🔒 Password Reset Request</h2>
+        <p>Dear <strong>${user.name}</strong>,</p>
+        <p>We received a request to reset the password for your account.</p>
+        <p>Click the button below to reset your password:</p>
+        <p>
+          <a href="${resetLink}" style="display: inline-block; background-color: #2d3e50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+        </p>
+        <p>If the button doesn't work, copy and paste the link below into your browser:</p>
+        <p><a href="${resetLink}" style="color: #2d3e50;">${resetLink}</a></p>
+        <p>If you didn’t request this, you can safely ignore this email.</p>
+        <br>
+        <p style="font-size: 14px; color: #777;">– Security Team</p>
+      </div>
+      `
+    );
+
+    res.status(StatusCodes.OK).send("Link sent");
+  } catch (error) {
+    throw new BadRequestError(error);
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { token } = req.query;
+  const { password } = req.body;
+
+  if (!password) {
+    throw new BadRequestError("Password in missing!");
+  }
+
+  if (!token) {
+    throw new BadRequestError("Token Is not Provided!");
+  }
+
+  const isPasswordChangedAfter = (user, tokenIat) => {
+    if (!user.passwordchangedAt) return false;
+
+    const changeTimeStamp = parseInt(
+      user.passwordchangedAt.getTime() / 1000,
+      10
+    );
+    return changeTimeStamp > tokenIat;
+  };
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const userPayload = {
+      id: payload.userId,
+    };
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.findById(userPayload.id);
+
+    if (!user) {
+      throw new BadRequestError("User Not Found");
+    }
+
+    if(isPasswordChangedAfter(user, payload.iat)){
+      throw new UnauthenticatedError("Token is no longer valid. Password was changed.")
+    }
+
+    await User.findByIdAndUpdate(
+      userPayload.id,
+      { password: hashedPassword, passwordchangedAt: new Date() },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(StatusCodes.OK).send("Password Updated");
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      throw new UnauthenticatedError("Token has expired");
+    }
+    throw new BadRequestError(error)
+  }
+};
+
+module.exports = { register, login, resetPasswordRequest, resetPassword };

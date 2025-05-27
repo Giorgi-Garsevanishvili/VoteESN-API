@@ -8,35 +8,58 @@ const {
 } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification");
 const bcrypt = require("bcryptjs");
+const { resetPasswordRequest } = require("../auth");
 
 const createUser = async (req, res) => {
   const user = new User({ ...req.body, section: req.user.section });
   const token = user.createJWT();
   await user.save();
-  emailNotification(
-    user.email,
-    "New User Created / VoteESN",
-    `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; color: #333;">
-      <h2 style="color: #2c3e50;">🎉 Welcome to the System!</h2>
-      <p>Hello <strong>${user.name}</strong>,</p>
-      <p>You’ve been successfully registered by an admin in VoteESN Election system.</p>
-      <p>If you didn’t expect this registration, you can ignore this email.</p>
-      <br>
-      <p style="font-size: 14px; color: #888;">– Your Admin Team</p>
-    </div>`
+
+  const tokenCode = jwt.sign(
+    {
+      userId: user._id,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" }
   );
-  res
-    .status(StatusCodes.CREATED)
-    .json({
-      success: true,
-      user: { userName: user.name, userSection: user.section },
-      token,
-    });
+
+  const resetLink = `https://voteesn.qirvex.dev/reset-password?token=${tokenCode}`;
+
+  emailNotification(
+  user.email,
+  "Welcome to VoteESN – Set Your Password",
+  `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; color: #333;">
+    <h2 style="color: #2c3e50;">🎉 Welcome to VoteESN!</h2>
+    <p>Hello <strong>${user.name}</strong>,</p>
+    <p>You have been successfully registered by an admin in the <strong>VoteESN Election System</strong>.</p>
+    <p>To complete your registration, please set your account password by clicking the button below:</p>
+    <p>
+      <a href="${resetLink}" style="display: inline-block; background-color: #2c3e50; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+        Set Your Password
+      </a>
+    </p>
+    <p>If the button above doesn’t work, copy and paste this link into your browser:</p>
+    <p><a href="${resetLink}" style="color: #2c3e50;">${resetLink}</a></p>
+    <p>If you weren’t expecting this registration, you can safely ignore this email.</p>
+
+    <br><br>
+    <p style="font-size: 14px; color: #888;">– VoteESN Admin Team</p>
+  </div>`
+);
+
+
+  res.status(StatusCodes.CREATED).json({
+    success: true,
+    user: { userName: user.name, userSection: user.section },
+    token,
+  });
 };
 
 const getUser = async (req, res) => {
   const user = await User.find({
-    section: { $in: [req.user.section, `Requested ${req.user.section}`, "Demo"] },
+    section: {
+      $in: [req.user.section, `Requested ${req.user.section}`, "Demo"],
+    },
   });
 
   if (!user || user.length === 0) {
@@ -56,7 +79,12 @@ const updateUser = async (req, res) => {
   }
 
   const user = await User.findOneAndUpdate(
-    { _id: userID, section: { $in: [req.user.section, `Requested ${req.user.section}`, "Demo"]} },
+    {
+      _id: userID,
+      section: {
+        $in: [req.user.section, `Requested ${req.user.section}`, "Demo"],
+      },
+    },
     req.body,
     {
       new: true,
@@ -126,7 +154,9 @@ const deleteUser = async (req, res) => {
 
   const user = await User.findOneAndDelete({
     _id: userID,
-    section: { $in: [req.user.section, `Requested ${req.user.section}`, "Demo"]},
+    section: {
+      $in: [req.user.section, `Requested ${req.user.section}`, "Demo"],
+    },
   });
 
   if (!user || user.length === 0) {
