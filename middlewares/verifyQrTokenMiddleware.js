@@ -1,5 +1,6 @@
 const { BadRequestError } = require("../errors");
 const voterToken = require("../models/voterToken");
+const Election = require("../models/election-model");
 
 const verifyQrTokenMiddleware = async (req, res, next) => {
   try {
@@ -18,7 +19,7 @@ const verifyQrTokenMiddleware = async (req, res, next) => {
       token,
       used: false,
       electionId: id,
-      section: req.user.section
+      section: req.user.section,
     });
 
     if (!voterQR) {
@@ -28,6 +29,14 @@ const verifyQrTokenMiddleware = async (req, res, next) => {
     }
 
     req.voterQR = voterQR;
+
+    const ongoingElection = await Election.findById(id);
+
+    if (ongoingElection.status === "Draft") {
+      throw new BadRequestError("Election is not Launched");
+    } else if (ongoingElection.status === "Completed") {
+      throw new BadRequestError("Election is Completed");
+    }
 
     next();
   } catch (error) {
