@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 3.6.0
+  version: 3.7.0
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
@@ -157,7 +157,7 @@ paths:
       responses:
         "200":
           description: Successful response
-        
+
   /auth/reset-password-request:
     post:
       tags:
@@ -173,11 +173,10 @@ paths:
       responses:
         "200":
           description: Successful response
-                  
-          
+
   /auth/reset-password:
     post:
-      tags: 
+      tags:
         - Register/Login
       summary: Reset user password using a token
       description: Allows a user to reset their password using a valid JWT token sent via query.

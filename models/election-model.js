@@ -49,8 +49,8 @@ const ElectionSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: ["Draft", "Ongoing", "Completed", "Archive"],
-        message: "Status can be Draft, Ongoing, Completed or Archive",
+        values: ["Draft", "Ongoing", "Completed"],
+        message: "Status can be Draft, Ongoing or Completed ",
       },
       default: "Draft",
     },
@@ -63,19 +63,37 @@ const ElectionSchema = new mongoose.Schema(
 ElectionSchema.pre("findOneAndUpdate", async function (next) {
   const query = this.getQuery();
   const docToUpdate = await this.model.findOne(query);
+  const update = this.getUpdate();
 
   if (!docToUpdate) {
     return next();
   }
 
-  if (
-    docToUpdate.status === "Archive" ||
-    docToUpdate.status === "Ongoing" ||
-    docToUpdate.status === "Completed"
-  ) {
+  const currentStatus = docToUpdate.status;
+
+  if (currentStatus === "Completed") {
     const err = new Error(`${docToUpdate.status} elections cannot be updated.`);
     err.status = 400;
     return next(err);
+  }
+
+  if (currentStatus === "Ongoing") {
+    const allowedUpdateFields = ["status", "updatedBy", "$set", "$setOnInsert"];
+    const updateKeys = Object.keys(update);
+    const onlyAllowedKeys = updateKeys.every((key) =>
+      allowedUpdateFields.includes(key)
+    );
+
+    const statusIsCompleted =
+      update.status === "Completed" || update.$set?.status === "Completed";
+
+    if (!(onlyAllowedKeys && statusIsCompleted)) {
+      const err = new Error(
+        "Ongoing elections can only be updated to 'Completed' along with metadata fields."
+      );
+      err.status = 400;
+      return next(err);
+    }
   }
 
   next();
