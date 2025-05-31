@@ -8,10 +8,17 @@ const {
 } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification");
 const bcrypt = require("bcryptjs");
-const { resetPasswordRequest } = require("../auth");
+const cryptoRandomString = require("crypto-random-string").default;
 
 const createUser = async (req, res) => {
-  const user = new User({ ...req.body, section: req.user.section });
+  const password = cryptoRandomString({
+    length: 32,
+    type: "alphanumeric",
+  });
+  if (!password) {
+    throw new BadRequestError("Failed To Generate Password");
+  }
+  const user = new User({ ...req.body, password, section: req.user.section });
   const token = user.createJWT();
   await user.save();
 
@@ -23,12 +30,12 @@ const createUser = async (req, res) => {
     { expiresIn: "15m" }
   );
 
-  const resetLink = `https://voteesn.qirvex.dev/reset-password?token=${tokenCode}`;
+  const resetLink = `https://voteesn.qirvex.dev/src/views/reset-password.html?token=${tokenCode}`;
 
   emailNotification(
-  user.email,
-  "Welcome to VoteESN – Set Your Password",
-  `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; color: #333;">
+    user.email,
+    "Welcome to VoteESN – Set Your Password",
+    `<div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; color: #333;">
     <h2 style="color: #2c3e50;">🎉 Welcome to VoteESN!</h2>
     <p>Hello <strong>${user.name}</strong>,</p>
     <p>You have been successfully registered by an admin in the <strong>VoteESN Election System</strong>.</p>
@@ -45,8 +52,7 @@ const createUser = async (req, res) => {
     <br><br>
     <p style="font-size: 14px; color: #888;">– VoteESN Admin Team</p>
   </div>`
-);
-
+  );
 
   res.status(StatusCodes.CREATED).json({
     success: true,
