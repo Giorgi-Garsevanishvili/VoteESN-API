@@ -8,10 +8,17 @@ const {
 } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification");
 const bcrypt = require("bcryptjs");
-const { resetPasswordRequest } = require("../auth");
+const cryptoRandomString = require("crypto-random-string").default;
 
 const createUser = async (req, res) => {
-  const user = new User({ ...req.body, section: req.user.section });
+  const password = cryptoRandomString({
+    length: 32,
+    type: "alphanumeric",
+  });
+  if (!password) {
+    throw new BadRequestError("Failed To Generate Password");
+  }
+  const user = new User({ ...req.body, password, section: req.user.section });
   const token = user.createJWT();
   await user.save();
 
@@ -23,7 +30,7 @@ const createUser = async (req, res) => {
     { expiresIn: "15m" }
   );
 
-  const resetLink = `https://voteesn.qirvex.dev/src/views/reset-password.html?token=${token}`;
+  const resetLink = `https://voteesn.qirvex.dev/src/views/reset-password.html?token=${tokenCode}`;
 
   emailNotification(
     user.email,
