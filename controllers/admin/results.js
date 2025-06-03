@@ -1,8 +1,12 @@
+// Description : the controller for managing election results in an admin section of an application.
+
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../../errors");
 const VoterModel = require("../../models/voter-model");
 const voterModel = require("../../models/voter-model");
 
+// getResults function retrieves the voting results for a specific election
+// and section, returning the answers provided by voters.
 const getResults = async (req, res) => {
   try {
     const { id: electionId } = req.params;
@@ -18,6 +22,8 @@ const getResults = async (req, res) => {
   }
 };
 
+// deleteResults function deletes all voting results for a specific election
+// and section, ensuring that the results are removed from the database.
 const deleteResults = async (req, res) => {
   const { id: electionId } = req.params;
   const deletedResults = await voterModel.deleteMany({ electionId, section: req.user.section });

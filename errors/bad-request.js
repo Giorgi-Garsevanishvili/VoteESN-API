@@ -1,3 +1,6 @@
+// BadRequest Error Module
+// This module defines a custom error class for handling bad request errors in an API.
+
 const CustomAPIError = require("./custom-err");
 const { StatusCodes } = require("http-status-codes");
 

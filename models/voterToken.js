@@ -1,5 +1,10 @@
+// Description : VoterToken model for the VoteESN application.
+// This model defines the structure of a voter's token, including the token string, election ID, QR code image, and metadata like used status and section.
+
 const mongoose = require("mongoose");
 
+// shcema for voter token
+// includes token string, election ID, QR code image, used status, sent status, and section
 const voterTokenSchema = new mongoose.Schema(
   {
     token: { type: String, required: true, unique: true },

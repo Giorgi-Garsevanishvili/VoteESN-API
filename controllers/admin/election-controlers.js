@@ -1,3 +1,5 @@
+// Description : This file contains the controllers for managing elections in an admin section of an application.
+
 const { StatusCodes } = require("http-status-codes");
 const Election = require("../../models/election-model");
 const {
@@ -7,6 +9,8 @@ const {
 } = require("../../errors");
 const User = require("../../models/user-model");
 
+
+// Function to create a new election with provided details.
 const createElection = async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -23,6 +27,7 @@ const createElection = async (req, res) => {
   }
 };
 
+// Function to retrieve all elections for the user's section.
 const getAllElection = async (req, res) => {
   try {
     const allElections = await Election.find({ section: req.user.section });
@@ -36,6 +41,7 @@ const getAllElection = async (req, res) => {
   }
 };
 
+// Function to retrieve a specific election by its ID in the user's section.
 const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
@@ -83,6 +89,7 @@ const getOneElection = async (req, res) => {
   }
 };
 
+// Function to update an existing election by its ID in the user's section.
 const updateElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
@@ -115,6 +122,7 @@ const updateElection = async (req, res) => {
   }
 };
 
+// Function to delete an existing election by its ID in the user's section.
 const deleteElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;

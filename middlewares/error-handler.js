@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 
+// customErrorHandler Middleware
+// This middleware handles errors in the application by customizing the error response based on the type of error.
 const customErrorHandler = (err, req, res, next) => {
   let customError = {
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,

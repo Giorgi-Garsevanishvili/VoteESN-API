@@ -1,3 +1,5 @@
+// Description: Controller for managing access QR codes in the voting system
+
 const { StatusCodes } = require("http-status-codes");
 const JSZip = require("jszip");
 const QRCode = require("qrcode");
@@ -8,6 +10,7 @@ const emailNotification = require("../../utils/mailNotification");
 const UAParser = require("ua-parser-js");
 const Election = require("../../models/election-model.js")
 
+// Function to parse user agent string and extract OS and browser information
 const parseUserAgent = (uaString) => {
   const parser = new UAParser();
   parser.setUA(uaString);
@@ -19,6 +22,8 @@ const parseUserAgent = (uaString) => {
   };
 };
 
+
+// Function to generate QR codes and voter tokens
 const generateQrCodes = async (req, res) => {
   try {
     const { numToken } = req.body;
@@ -55,6 +60,7 @@ const generateQrCodes = async (req, res) => {
   }
 };
 
+// Function to retrieve QR codes for a specific election and section
 const getQRCodes = async (req, res) => {
   try {
     const { id: electionId } = req.params;
@@ -102,6 +108,7 @@ const getQRCodes = async (req, res) => {
   }
 };
 
+// Function to retrieve access codes for a specific election and section
 const getAccessCodes = async (req, res) => {
   try {
     const { id: electionId } = req.params;
@@ -126,6 +133,7 @@ const getAccessCodes = async (req, res) => {
   }
 };
 
+// Function to delete access QR codes for a specific election and section
 const deleteAccessQR = async (req, res) => {
   const { id: electionId } = req.params;
 
@@ -140,6 +148,7 @@ const deleteAccessQR = async (req, res) => {
   });
 };
 
+// Function to reveal a voter token and send an email notification
 const revealToken = async (req, res) => {
   try {
     const { tokenId, form, lsdata } = req.body;

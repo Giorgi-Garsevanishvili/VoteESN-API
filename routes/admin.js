@@ -1,3 +1,4 @@
+// Description : This file contains the controllers for managing elections in an admin section of an application.
 const express = require("express");
 const router = express.Router();
 const QRCode = require("qrcode");
@@ -8,18 +9,29 @@ const { getResults, deleteResults } = require("../controllers/admin/results.js")
 const { getSettingsFromDB, createSettings, updateSettings,deleteSettings } = require("../controllers/settings-controller.js");
 const { sendCodes } = require("../controllers/admin/mailer.js");
 
+
+// route for managing elections
 router.route('/election').get(getAllElection).post(createElection)
 router.route('/election/:id').get(getOneElection).patch(updateElection).delete(deleteElection)
 
+// route for managing users
 router.route('/system/users').get(getUser).post(createUser)
 router.route('/system/users/:id').patch(updateUser).delete(deleteUser)
+
+// route for managing access QR codes and tokens
 router.route('/election/:id/generate-qr').post(generateQrCodes).get(getQRCodes).delete(deleteAccessQR)
 router.route('/election/tokens/:id').get(getAccessCodes)
+router.route('/election/email').post(sendCodes)
+
+// route for revealing tokens
+router.route('/election/revealToken').post(revealToken)
+
+// route for managing results
 router.route('/election/:id/results').get(getResults).delete(deleteResults)
 
+// route for managing settings
 router.route('/voter/settings').get(getSettingsFromDB).post(createSettings)
 router.route('/voter/settings/:id').patch(updateSettings).delete(deleteSettings)
-router.route('/election/email').post(sendCodes)
-router.route('/election/revealToken').post(revealToken)
+
 
 module.exports = router

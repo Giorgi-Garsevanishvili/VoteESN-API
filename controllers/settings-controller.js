@@ -1,7 +1,11 @@
+// Description : File contains the controller functions for managing settings in the VoteESN application, like IP restrictions. 
+
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
 const Settings = require("../models/setting-model");
 
+
+// Function to retrieve settings from the database for the user's section
 const getSettingsFromDB = async (req, res) => {
   try {
     const settings = await Settings.find({section: req.user.section});
@@ -16,6 +20,7 @@ const getSettingsFromDB = async (req, res) => {
   }
 };
 
+// Function to create new settings in the database for the user's section
 const createSettings = async (req, res) => {
   try {
     const settingsData = { ...req.body, section: req.user.section };
@@ -38,6 +43,7 @@ const createSettings = async (req, res) => {
   }
 };
 
+// Function to update existing settings in the database for the user's section
 const updateSettings = async (req, res) => {
   try {
     const { id: settingID } = req.params;
@@ -72,6 +78,7 @@ const updateSettings = async (req, res) => {
   }
 };
 
+// Function to delete settings from the database for the user's section
 const deleteSettings = async (req, res) => {
   try {
     if (req.user.role !== "admin") {

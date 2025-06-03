@@ -1,9 +1,12 @@
+// Desccription : Controller to send voter token codes via email
+
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../../errors");
 const emailNotification = require("../../utils/mailNotification.js");
 const voterToken = require("../../models/voterToken.js");
 const Election = require("../../models/election-model.js");
 
+// This function sends voter token codes via email to the specified recipient with QR code attachment.
 const sendCodes = async (req, res) => {
   const { to, tokenId } = req.body;
 

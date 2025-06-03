@@ -1,15 +1,24 @@
+// Description : Election model for the VoteESN application.
+// This model defines the structure of an election, including its title, topics, options, and metadata like status and section.
+
 const mongoose = require("mongoose");
 
+// Define the schema for options within a topic
+// This schema includes the text of the option and the number of votes it has received.
 const OptionsSchema = new mongoose.Schema({
   text: { type: String, required: true },
   votes: { type: Number, default: 0 },
 });
 
+// Define the schema for topics within an election
+// Each topic has a title and an array of options.
 const TopicSchema = new mongoose.Schema({
   title: { type: String, required: true },
   options: [OptionsSchema],
 });
 
+// Define the main schema for an election
+// This schema includes the election title, topics, creator, updater, section, and status.
 const ElectionSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -60,6 +69,7 @@ const ElectionSchema = new mongoose.Schema(
   }
 );
 
+// Pre-save hook to ensure that the election update is allowed based on its current status.
 ElectionSchema.pre("findOneAndUpdate", async function (next) {
   const query = this.getQuery();
   const docToUpdate = await this.model.findOne(query);

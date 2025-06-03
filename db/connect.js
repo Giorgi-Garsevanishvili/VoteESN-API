@@ -1,3 +1,4 @@
+// Database connection module
 const mongoose = require('mongoose')
 
 const connectDB = (url) => {

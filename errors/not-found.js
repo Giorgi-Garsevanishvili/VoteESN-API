@@ -1,3 +1,6 @@
+// Not Found Error Module
+// This module defines a custom error class for handling not found errors in an API.
+
 const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("./custom-err");
 

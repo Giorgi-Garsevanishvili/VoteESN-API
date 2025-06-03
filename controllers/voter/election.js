@@ -1,3 +1,5 @@
+// Description : File to manage elections in the voter section of the VoteESN application.
+
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../../errors");
 const Election = require("../../models/election-model");
@@ -6,6 +8,7 @@ const VoterModel = require("../../models/voter-model");
 const { default: mongoose } = require("mongoose");
 const User = require("../../models/user-model");
 
+// getAllElection function retrieves all elections for the user's section and returns them in the response.
 const getAllElection = async (req, res) => {
   try {
     const allElections = await Election.find({ section: req.user.section });
@@ -19,6 +22,7 @@ const getAllElection = async (req, res) => {
   }
 };
 
+// getOneElection function retrieves a specific election by its ID in the user's section and returns it in the response.
 const getOneElection = async (req, res) => {
   try {
     const { id: electionID } = req.params;
@@ -32,6 +36,8 @@ const getOneElection = async (req, res) => {
   }
 };
 
+// submitVote function allows a voter to submit their vote for a specific election.
+// It creates a new vote record and marks the used QR code as used.
 const submitVote = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -64,32 +70,41 @@ const submitVote = async (req, res) => {
   }
 };
 
+// validateToken function checks if the provided token is valid and not used,
+// and returns the election ID and section if valid.
 const validateToken = async (req, res) => {
   const { token } = req.body;
 
   if (!token) {
     throw new BadRequestError("Token must be presented!");
   }
-
-  const candidateToken = await voterToken.find({
+  
+  const candidateToken = await voterToken.findOne({
     token,
     used: false,
     section: req.user.section,
   });
 
-  if (!candidateToken.length) {
+  if (!candidateToken) {
     throw new BadRequestError("Invalid Token");
   }
 
-  const validatedToken = candidateToken.map((el) => ({
-    token: el.token,
-    electionId: el.electionId,
-    section: req.user.section,
-  }));
+  const validatedToken = {
+    token : candidateToken.token,
+    electionId : candidateToken.electionId,
+    section : candidateToken.section
+  }
+
+  const ongoingElection = await Election.findOne({_id: validatedToken.electionId})
+
+  if (ongoingElection.status === "Draft") {
+    throw new BadRequestError("Election is not Launched");
+  } else if (ongoingElection.status === "Completed") {
+    throw new BadRequestError("Election is Completed");
+  }
 
   res.status(StatusCodes.OK).json({ data: validatedToken });
 };
-
 
 module.exports = {
   getAllElection,
