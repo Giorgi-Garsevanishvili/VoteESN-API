@@ -1,8 +1,15 @@
+// Description : Settings model for the VoteESN application.
+// This model defines the structure of settings, including section, IP restrictions, and allowed IPs.
+
 const mongoose = require("mongoose");
 
 const ipv4Regex =
   /^(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4][0-9]|1\d\d|[1-9]?\d)$/;
 
+  // Define the schema for settings 
+  // This schema includes the section, IP restrictions, and allowed IPs.
+  // The section can be one of several predefined values, and allowedIPs must be an array of valid IPv4 addresses.
+  // The ipRestrictionEnabled field indicates whether IP restrictions are enabled.
 const SettingsSchema = new mongoose.Schema({
   section: {
     type: String,

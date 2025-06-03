@@ -1,3 +1,6 @@
+// Description : Mail notification utility for sending emails using Nodemailer.
+// This utility function allows sending emails with attachments using a Gmail account.
+
 const nodemailer = require("nodemailer");
 
 const emailNotification = (to, subject, html, attachment = []) => {

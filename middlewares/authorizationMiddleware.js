@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 
+// Authorization Middleware
+// This middleware checks if the user has the required role to access a resource.
 const authorizationMiddleware = (requiredRole) => (req, res, next) => {
 
   if(!req.user) {

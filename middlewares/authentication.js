@@ -1,6 +1,9 @@
 const { UnauthenticatedError } = require("../errors");
 const jwt = require("jsonwebtoken");
 
+
+// Authentication Middleware
+// This middleware checks for a valid JWT token in the request headers.
 const authenticationMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 

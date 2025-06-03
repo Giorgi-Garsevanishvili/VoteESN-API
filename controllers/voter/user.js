@@ -1,8 +1,11 @@
+// Description : File to manage user accounts in the voter section of the VoteESN application by voters.
+
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../../errors");
 const User = require("../../models/user-model");
 const emailNotification = require("../../utils/mailNotification.js");
 
+// This function retrieves the account information of the logged-in user.
 const getAccountInfo = async (req, res) => {
   try {
     const { userID } = req.user;
@@ -23,6 +26,7 @@ const getAccountInfo = async (req, res) => {
   }
 };
 
+// This function updates the account information of the logged-in user.
 const updateAccount = async (req, res) => {
   try {
     const { userID } = req.user;
@@ -64,6 +68,7 @@ const updateAccount = async (req, res) => {
   }
 };
 
+// This function deletes the account of the logged-in user.
 const deleteAccount = async (req, res) => {
   try {
     const { userID } = req.user;

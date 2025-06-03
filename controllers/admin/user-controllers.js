@@ -1,3 +1,5 @@
+// File to manage user-related operations in the admin section of the VoteESN application.
+
 const { StatusCodes } = require("http-status-codes");
 const User = require("../../models/user-model");
 const jwt = require("jsonwebtoken");
@@ -10,6 +12,9 @@ const emailNotification = require("../../utils/mailNotification");
 const bcrypt = require("bcryptjs");
 const cryptoRandomString = require("crypto-random-string").default;
 
+
+// createUser function creates a new user with a randomly generated password,
+// sends a welcome email with a link to set their password, and returns the user data along with a JWT token. section assigned to the user is taken from the authenticated admin section.
 const createUser = async (req, res) => {
   const password = cryptoRandomString({
     length: 32,
@@ -61,6 +66,8 @@ const createUser = async (req, res) => {
   });
 };
 
+// getUser function retrieves all users in the same section as the authenticated user,
+// including those in the "Requested" section or "Demo" section, and returns them in the response.
 const getUser = async (req, res) => {
   const user = await User.find({
     section: {
@@ -75,6 +82,8 @@ const getUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
+// updateUser function updates the user details based on the provided user ID,
+// hashes the password if it is provided, and sends an email notification about the changes made.
 const updateUser = async (req, res) => {
   const { id: userID } = req.params;
 
@@ -151,6 +160,7 @@ const updateUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ success: true, data: { user } });
 };
 
+// deleteUser function deletes a user by their ID, ensuring that only admins can perform this action. 
 const deleteUser = async (req, res) => {
   const { id: userID } = req.params;
 

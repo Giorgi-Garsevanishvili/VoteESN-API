@@ -1,3 +1,5 @@
+// Description : File manages user authentication and account management in the VoteESN application.
+
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 const User = require("../models/user-model.js");
 const { StatusCodes } = require("http-status-codes");
@@ -6,6 +8,8 @@ const UAParser = require("ua-parser-js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+
+// Function to parse user agent string and extract OS and browser information
 const parseUserAgent = (uaString) => {
   const parser = new UAParser();
   parser.setUA(uaString);
@@ -17,6 +21,7 @@ const parseUserAgent = (uaString) => {
   };
 };
 
+// Function to register a new user. publicly accessible, puts the user in the "Demo" section by default.
 const register = async (req, res) => {
   const user = new User({ ...req.body, section: "Demo" });
   const token = user.createJWT();
@@ -56,6 +61,7 @@ const register = async (req, res) => {
     .json({ user: { name: user.name, section: user.section }, token: token });
 };
 
+// Function to log in a user. It checks the provided email and password, updates the last login time,
 const login = async (req, res) => {
   const normalisedEmail = req.body.email.toLowerCase();
   const { password } = req.body;
@@ -112,6 +118,7 @@ const login = async (req, res) => {
   });
 };
 
+// Function to handle password reset requests. It generates a JWT token and sends a reset link to the user's email.
 const resetPasswordRequest = async (req, res) => {
   const { email } = req.body;
 
@@ -162,6 +169,7 @@ const resetPasswordRequest = async (req, res) => {
   }
 };
 
+// Function to reset the user's password using a token. It verifies the token, checks if the password has been changed after the token was issued, and updates the password.
 const resetPassword = async (req, res) => {
   const { token } = req.query;
   const { password } = req.body;

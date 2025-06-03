@@ -2,6 +2,8 @@ const { BadRequestError } = require("../errors");
 const voterToken = require("../models/voterToken");
 const Election = require("../models/election-model");
 
+// Middleware to verify the QR token for voting in an election
+// This middleware checks if the provided token is valid, not used, and associated with the correct election.
 const verifyQrTokenMiddleware = async (req, res, next) => {
   try {
     const { token } = req.query;

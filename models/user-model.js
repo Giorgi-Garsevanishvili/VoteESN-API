@@ -1,7 +1,12 @@
+// Description : User model for managing elections in the VoteESN application.
+// Defines the structure of a user, including their name, email, password, role, section, and methods for authentication and JWT creation.
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+// This schema defines the structure of a user in the VoteESN application.
+// It includes fields for name, email, password, role, section, last login time, and password change timestamp.
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -61,12 +66,14 @@ const UserSchema = new mongoose.Schema({
   passwordchangedAt: Date
 });
 
+// Pre-save hook to hash the password before saving the user document.
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   this.email = this.email.toLowerCase();
 });
 
+// Method to create a JWT token for the user.
 UserSchema.methods.createJWT = function () {
   return jwt.sign(
     {
@@ -80,6 +87,7 @@ UserSchema.methods.createJWT = function () {
   );
 };
 
+// Check if the password is correct by comparing the candidate password with the hashed password stored in the database.
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   const isMatch = await bcrypt.compare(candidatePassword, this.password);
   return isMatch;

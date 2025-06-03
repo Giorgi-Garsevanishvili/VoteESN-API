@@ -1,5 +1,10 @@
+// Description : Voter model for the VoteESN application.
+// defines the structure of a voter's response to an election, including the election ID, answers, and section.
+
 const mongoose = require("mongoose");
 
+// This schema defines the structure of a voter's response to an election.
+// It includes the election ID, answers to questions, record time stamp, and the section in which the voter is participating.
 const VoterSchema = new mongoose.Schema(
   {
     electionId: {
