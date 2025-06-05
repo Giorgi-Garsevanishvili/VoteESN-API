@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: VoteESN-API
-  version: 3.8.0
+  version: 3.9.0
 servers:
   - url: https://voteesn-api.onrender.com/api/v1
 components:
