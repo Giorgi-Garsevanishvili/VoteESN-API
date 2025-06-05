@@ -8,7 +8,6 @@ const UAParser = require("ua-parser-js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-
 // Function to parse user agent string and extract OS and browser information
 const parseUserAgent = (uaString) => {
   const parser = new UAParser();
@@ -64,7 +63,7 @@ const register = async (req, res) => {
 // Function to log in a user. It checks the provided email and password, updates the last login time,
 const login = async (req, res) => {
   const normalisedEmail = req.body.email.toLowerCase();
-  const { password } = req.body;
+  const { password, consentAccepted } = req.body;
 
   if (!normalisedEmail || !password) {
     throw new BadRequestError("Please provide email and password");
@@ -79,6 +78,36 @@ const login = async (req, res) => {
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError("Wrong Password!");
   }
+
+  if (
+    (!user.consentAccepted ||
+      user.termsVersion !== process.env.TERMS_VERSION) &&
+    !consentAccepted
+  ) {
+    throw new BadRequestError(
+      "You must accept the terms and conditions to access the platform"
+    );
+  }
+
+  if (
+    (!user.consentAccepted ||
+      user.termsVersion !== process.env.TERMS_VERSION) &&
+    consentAccepted
+  ) {
+    user.consentAccepted = true;
+    user.termsVersion = process.env.TERMS_VERSION;
+    user.consentTimeStamp = new Date();
+
+    user.consentLog.push({
+      accepted: true,
+      version: process.env.TERMS_VERSION,
+      timestamp: new Date(),
+    });
+
+    await user.save();
+  }
+
+  
 
   await User.findByIdAndUpdate(user.id, { lastLogin: new Date() });
 

@@ -4,6 +4,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { required } = require("joi");
 
 // This schema defines the structure of a user in the VoteESN application.
 // It includes fields for name, email, password, role, section, last login time, and password change timestamp.
@@ -63,14 +64,35 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  passwordchangedAt: Date
+  consentAccepted: {
+    type: Boolean,
+    default: null,
+  },
+  consentTimeStamp: {
+    type: Date,
+    default: null,
+  },
+  termsVersion: {
+    type: String,
+    default: null,
+  },
+  consentLog: [
+    {
+      accepted: { type: Boolean, required: true },
+      timestamp: { type: Date, default: Date.now },
+      version: { type: String, required: true },
+    },
+  ],
+  passwordchangedAt: Date,
 });
 
 // Pre-save hook to hash the password before saving the user document.
-UserSchema.pre("save", async function () {
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   this.email = this.email.toLowerCase();
+  next();
 });
 
 // Method to create a JWT token for the user.
