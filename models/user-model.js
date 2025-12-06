@@ -54,7 +54,7 @@ const UserSchema = new mongoose.Schema({
         "Requested Jelgava",
         "Requested Valmiera",
         "Requested Global",
-        "Requseted Demo",
+        "Requested Demo",
       ],
       message: "{value} Doesn`t exist or Is not Available",
     },
